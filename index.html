@@ -2,27 +2,11 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Couloir TSA - 20 portes avec téléportation</title>
+  <title>Couloir TSA - Index</title>
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-  <script>
-    // Composant pour ouvrir la porte automatiquement quand le joueur s'approche
-    AFRAME.registerComponent('open-on-approach', {
-      schema: { distance: { type: 'number', default: 2 } },
-      tick: function () {
-        const player = document.querySelector('#player');
-        const doorPos = this.el.object3D.position;
-        const playerPos = player.object3D.position;
-        const dx = playerPos.x - doorPos.x;
-        const dz = playerPos.z - doorPos.z;
-        const dist = Math.sqrt(dx*dx + dz*dz);
-        if (dist < this.data.distance) {
-          this.el.setAttribute('rotation', '0 90 0'); // rotation pour "ouvrir"
-        } else {
-          this.el.setAttribute('rotation', '0 0 0'); // fermer si éloigné
-        }
-      }
-    });
-  </script>
+  <!-- Scripts séparés pour modularité -->
+  <script src="js/open-on-approach.js"></script>
+  <script src="js/teleport.js"></script>
 </head>
 <body>
   <a-scene>
@@ -34,17 +18,17 @@
     <!-- Couloir noir -->
     <a-box position="0 1.5 -25" depth="50" height="3" width="5" color="#000"></a-box>
 
-    <!-- Portes avec GLB et zones de téléportation -->
+    <!-- Portes + zones de téléportation -->
     <script>
       const scene = document.querySelector('a-scene');
       for (let i = 1; i <= 20; i++) {
         const zPos = -2.5 * i;
 
-        // Porte GLB
+        // Porte miniature
         const door = document.createElement('a-entity');
         door.setAttribute('gltf-model', '#doorModel');
         door.setAttribute('position', `0 0 ${zPos}`);
-        door.setAttribute('scale', '1 1 1');
+        door.setAttribute('scale', '0.01 0.01 0.01'); // très fine
         door.setAttribute('open-on-approach', 'distance:2');
         scene.appendChild(door);
 
@@ -67,18 +51,19 @@
       </a-camera>
     </a-entity>
 
-    <script>
-      const player = document.querySelector('#player');
-
-      for (let i = 1; i <= 20; i++) {
-        const zone = document.querySelector(`#teleport${i}`);
-        zone.addEventListener('mouseenter', () => {
-          console.log(`Vous avez franchi la porte ${i}`);
-          // Exemple : téléportation dans une nouvelle pièce (modifie selon tes besoins)
-          player.setAttribute('position', { x: 0, y: 1.6, z: -50 - i*2 }); 
-        });
-      }
-    </script>
   </a-scene>
+
+  <script>
+    // Téléportation via zones invisibles
+    const player = document.querySelector('#player');
+    for (let i = 1; i <= 20; i++) {
+      const zone = document.querySelector(`#teleport${i}`);
+      zone.addEventListener('mouseenter', () => {
+        console.log(`Vous avez franchi la porte ${i}`);
+        // Téléportation vers une position temporaire (à remplacer par levelX.html plus tard)
+        player.setAttribute('position', { x: 0, y: 1.6, z: -50 - i*2 });
+      });
+    }
+  </script>
 </body>
 </html>
