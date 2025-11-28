@@ -2,9 +2,10 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Couloir TSA - 5 portes</title>
+  <title>Couloir TSA - 5 portes regroupées</title>
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <script>
+    // Composant pour ouvrir la porte automatiquement quand le joueur s'approche
     AFRAME.registerComponent('open-on-approach', {
       schema: { distance: { type: 'number', default: 2 } },
       tick: function () {
@@ -31,37 +32,41 @@
       <a-asset-item id="doorModel" src="assets/door.glb"></a-asset-item>
     </a-assets>
 
-    <!-- Couloir noir centré sur la caméra -->
-    <a-box position="0 1.5 0" depth="20" height="3" width="5" color="#000"></a-box>
+    <!-- Couloir regroupé dans un seul entity -->
+    <a-entity id="couloir" position="0 0 0">
+      <a-box position="0 1.5 0" depth="20" height="3" width="5" color="#000"></a-box>
+    </a-entity>
 
-    <!-- Portes à l'intérieur du couloir -->
-    <script>
-      const scene = document.querySelector('a-scene');
-      const numberOfDoors = 5;
-      const startZ = -8; // première porte
-      const spacing = 3; // espace entre les portes
-      for (let i = 0; i < numberOfDoors; i++) {
-        const zPos = startZ - i * spacing;
+    <!-- Toutes les portes regroupées sous un seul entity -->
+    <a-entity id="portes" position="0 0 0">
+      <script>
+        const portesEntity = document.querySelector('#portes');
+        const numberOfDoors = 5;
+        const startZ = -8;
+        const spacing = 3;
+        for (let i = 0; i < numberOfDoors; i++) {
+          const zPos = startZ - i * spacing;
 
-        // Porte GLB
-        const door = document.createElement('a-entity');
-        door.setAttribute('gltf-model', '#doorModel');
-        door.setAttribute('position', `0 0 ${zPos}`);
-        door.setAttribute('scale', '0.01 0.01 0.01');
-        door.setAttribute('open-on-approach', 'distance:2');
-        scene.appendChild(door);
+          // Porte GLB
+          const door = document.createElement('a-entity');
+          door.setAttribute('gltf-model', '#doorModel');
+          door.setAttribute('position', `0 0 ${zPos}`);
+          door.setAttribute('scale', '0.01 0.01 0.01');
+          door.setAttribute('open-on-approach', 'distance:2');
+          portesEntity.appendChild(door);
 
-        // Zone invisible pour téléportation
-        const zone = document.createElement('a-box');
-        zone.setAttribute('position', `0 1.6 ${zPos}`);
-        zone.setAttribute('depth', '1');
-        zone.setAttribute('height', '3');
-        zone.setAttribute('width', '5');
-        zone.setAttribute('visible', 'false');
-        zone.setAttribute('id', `teleport${i+1}`);
-        scene.appendChild(zone);
-      }
-    </script>
+          // Zone invisible pour téléportation
+          const zone = document.createElement('a-box');
+          zone.setAttribute('position', `0 1.6 ${zPos}`);
+          zone.setAttribute('depth', '1');
+          zone.setAttribute('height', '3');
+          zone.setAttribute('width', '5');
+          zone.setAttribute('visible', 'false');
+          zone.setAttribute('id', `teleport${i+1}`);
+          portesEntity.appendChild(zone);
+        }
+      </script>
+    </a-entity>
 
     <!-- Camera / joueur -->
     <a-entity id="player" position="0 1.6 2" camera wasd-controls look-controls>
@@ -77,7 +82,7 @@
         const zone = document.querySelector(`#teleport${i}`);
         zone.addEventListener('mouseenter', () => {
           console.log(`Franchi porte ${i}`);
-          // Exemple : téléportation plus loin dans le couloir
+          // Téléportation temporaire plus loin dans le couloir
           player.setAttribute('position', { x: 0, y: 1.6, z: -15 - i*2 });
         });
       }
