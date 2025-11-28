@@ -1,80 +1,84 @@
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Couloir TSA</title>
-    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-
-    <!-- Composant : téléporte le joueur quand il traverse une porte -->
-    <script>
-      AFRAME.registerComponent("porte-teleport", {
-        schema: {
-          target: {type: "string"} // id de la destination
-        },
-
-        init: function () {
-          const player = document.querySelector("#player");
-          this.el.addEventListener("mouseenter", () => {
-            const dest = document.querySelector(this.data.target);
-            if (dest) {
-              player.setAttribute("position", dest.getAttribute("position"));
-            }
-          });
+<head>
+  <meta charset="UTF-8">
+  <title>Couloir TSA - 20 portes avec téléportation</title>
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <script>
+    // Composant pour ouvrir la porte automatiquement quand le joueur s'approche
+    AFRAME.registerComponent('open-on-approach', {
+      schema: { distance: { type: 'number', default: 2 } },
+      tick: function () {
+        const player = document.querySelector('#player');
+        const doorPos = this.el.object3D.position;
+        const playerPos = player.object3D.position;
+        const dx = playerPos.x - doorPos.x;
+        const dz = playerPos.z - doorPos.z;
+        const dist = Math.sqrt(dx*dx + dz*dz);
+        if (dist < this.data.distance) {
+          this.el.setAttribute('rotation', '0 90 0'); // rotation pour "ouvrir"
+        } else {
+          this.el.setAttribute('rotation', '0 0 0'); // fermer si éloigné
         }
-      });
+      }
+    });
+  </script>
+</head>
+<body>
+  <a-scene>
+    <!-- Assets -->
+    <a-assets>
+      <a-asset-item id="doorModel" src="assets/door.glb"></a-asset-item>
+    </a-assets>
+
+    <!-- Couloir noir -->
+    <a-box position="0 1.5 -25" depth="50" height="3" width="5" color="#000"></a-box>
+
+    <!-- Portes avec GLB et zones de téléportation -->
+    <script>
+      const scene = document.querySelector('a-scene');
+      for (let i = 1; i <= 20; i++) {
+        const zPos = -2.5 * i;
+
+        // Porte GLB
+        const door = document.createElement('a-entity');
+        door.setAttribute('gltf-model', '#doorModel');
+        door.setAttribute('position', `0 0 ${zPos}`);
+        door.setAttribute('scale', '1 1 1');
+        door.setAttribute('open-on-approach', 'distance:2');
+        scene.appendChild(door);
+
+        // Zone de téléportation invisible
+        const zone = document.createElement('a-box');
+        zone.setAttribute('position', `0 1.6 ${zPos}`);
+        zone.setAttribute('depth', '1');
+        zone.setAttribute('height', '3');
+        zone.setAttribute('width', '5');
+        zone.setAttribute('visible', 'false');
+        zone.setAttribute('id', `teleport${i}`);
+        scene.appendChild(zone);
+      }
     </script>
 
-    <!-- Composant : génère automatiquement toutes les portes -->
+    <!-- Camera / joueur -->
+    <a-entity id="player" position="0 1.6 0" camera wasd-controls look-controls>
+      <a-camera>
+        <a-cursor></a-cursor>
+      </a-camera>
+    </a-entity>
+
     <script>
-      AFRAME.registerComponent("generer-portes", {
-        schema: {
-          count: {type: "int", default: 20},
-          spacing: {type: "number", default: 2}
-        },
+      const player = document.querySelector('#player');
 
-        init: function () {
-          const scene = this.el;
-          const data = this.data;
-
-          for (let i = 0; i < data.count; i++) {
-            const z = - (i * data.spacing + 5);
-
-            const porte = document.createElement("a-box");
-            porte.setAttribute("width", "1.5");
-            porte.setAttribute("height", "2.5");
-            porte.setAttribute("depth", "0.1");
-            porte.setAttribute("color", "#222");
-            porte.setAttribute("position", `0 1.25 ${z}`);
-            porte.setAttribute("porte-teleport", `target: #tp${i}`);
-
-            // Zone de destination
-            const tp = document.createElement("a-entity");
-            tp.setAttribute("id", `tp${i}`);
-            tp.setAttribute("position", `0 1.6 ${z - 1}`);
-
-            scene.appendChild(porte);
-            scene.appendChild(tp);
-          }
-        }
-      });
+      for (let i = 1; i <= 20; i++) {
+        const zone = document.querySelector(`#teleport${i}`);
+        zone.addEventListener('mouseenter', () => {
+          console.log(`Vous avez franchi la porte ${i}`);
+          // Exemple : téléportation dans une nouvelle pièce (modifie selon tes besoins)
+          player.setAttribute('position', { x: 0, y: 1.6, z: -50 - i*2 }); 
+        });
+      }
     </script>
-
-  </head>
-
-  <body>
-    <a-scene>
-
-      <!-- Joueur -->
-      <a-entity id="player" position="0 1.6 0">
-        <a-camera wasd-controls look-controls></a-camera>
-      </a-entity>
-
-      <!-- Couloir noir -->
-      <a-box position="0 0 -50" width="4" height="3" depth="100" color="#000"></a-box>
-
-      <!-- Génération automatique des portes -->
-      <a-entity generer-portes="count: 20; spacing: 2"></a-entity>
-
-    </a-scene>
-  </body>
+  </a-scene>
+</body>
 </html>
