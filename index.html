@@ -2,11 +2,27 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Couloir TSA - Index</title>
+  <title>Couloir TSA - 5 portes</title>
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-  <!-- Scripts séparés pour modularité -->
-  <script src="js/open-on-approach.js"></script>
-  <script src="js/teleport.js"></script>
+  <script>
+    // Composant pour ouvrir la porte automatiquement quand le joueur s'approche
+    AFRAME.registerComponent('open-on-approach', {
+      schema: { distance: { type: 'number', default: 2 } },
+      tick: function () {
+        const player = document.querySelector('#player');
+        const doorPos = this.el.object3D.position;
+        const playerPos = player.object3D.position;
+        const dx = playerPos.x - doorPos.x;
+        const dz = playerPos.z - doorPos.z;
+        const dist = Math.sqrt(dx*dx + dz*dz);
+        if (dist < this.data.distance) {
+          this.el.setAttribute('rotation', '0 90 0'); // ouvre la porte
+        } else {
+          this.el.setAttribute('rotation', '0 0 0'); // ferme la porte
+        }
+      }
+    });
+  </script>
 </head>
 <body>
   <a-scene>
@@ -15,16 +31,17 @@
       <a-asset-item id="doorModel" src="assets/door.glb"></a-asset-item>
     </a-assets>
 
-    <!-- Couloir noir -->
-    <a-box position="0 1.5 -25" depth="50" height="3" width="5" color="#000"></a-box>
+    <!-- Couloir noir centré devant la caméra -->
+    <a-box position="0 1.5 -15" depth="20" height="3" width="5" color="#000"></a-box>
 
-    <!-- Portes + zones de téléportation -->
+    <!-- Portes et zones de téléportation -->
     <script>
       const scene = document.querySelector('a-scene');
-      for (let i = 1; i <= 20; i++) {
-        const zPos = -2.5 * i;
+      const numberOfDoors = 5;
+      for (let i = 1; i <= numberOfDoors; i++) {
+        const zPos = -2.5 * i - 5; // Commence à l'intérieur du couloir
 
-        // Porte miniature
+        // Porte GLB
         const door = document.createElement('a-entity');
         door.setAttribute('gltf-model', '#doorModel');
         door.setAttribute('position', `0 0 ${zPos}`);
@@ -32,7 +49,7 @@
         door.setAttribute('open-on-approach', 'distance:2');
         scene.appendChild(door);
 
-        // Zone de téléportation invisible
+        // Zone invisible pour téléportation
         const zone = document.createElement('a-box');
         zone.setAttribute('position', `0 1.6 ${zPos}`);
         zone.setAttribute('depth', '1');
@@ -51,19 +68,18 @@
       </a-camera>
     </a-entity>
 
+    <!-- Téléportation -->
+    <script>
+      const player = document.querySelector('#player');
+      for (let i = 1; i <= 5; i++) {
+        const zone = document.querySelector(`#teleport${i}`);
+        zone.addEventListener('mouseenter', () => {
+          console.log(`Vous avez franchi la porte ${i}`);
+          // Téléportation temporaire vers une position plus loin dans le couloir
+          player.setAttribute('position', { x: 0, y: 1.6, z: -30 - i*2 });
+        });
+      }
+    </script>
   </a-scene>
-
-  <script>
-    // Téléportation via zones invisibles
-    const player = document.querySelector('#player');
-    for (let i = 1; i <= 20; i++) {
-      const zone = document.querySelector(`#teleport${i}`);
-      zone.addEventListener('mouseenter', () => {
-        console.log(`Vous avez franchi la porte ${i}`);
-        // Téléportation vers une position temporaire (à remplacer par levelX.html plus tard)
-        player.setAttribute('position', { x: 0, y: 1.6, z: -50 - i*2 });
-      });
-    }
-  </script>
 </body>
 </html>
