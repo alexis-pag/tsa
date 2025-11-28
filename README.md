@@ -2,7 +2,7 @@ Dans un **grand aéroport international**, les voyageurs défilaient sous les **
 
 Parmi le personnel chargé de veiller au bon déroulement de tout cela se trouvait un **douanier du nom d’Armand**. Depuis des années, il **observait les voyageurs**, **détectait les anomalies**, posait des questions lorsque quelque chose semblait **dévier de la norme**. Il connaissait son métier, mais surtout, il savait qu’**aucun système n’était parfaitement hermétique**. Une **faille existe toujours quelque part**, même dans les **procédures les mieux établies**.
 
-C’est au cours d’une de ses **journées habituelles** qu’Armand entendit parler d’une décision prise par la **TSA — la Transportation Security Administration**. L’agence avait instauré des **cadenas spéciaux pour les bagages internationaux** : des **verrous ordinaires**, mais que leurs agents pouvaient **ouvrir grâce à une clé maîtresse unique**. Aux yeux du public, cela semblait pratique. Aux yeux d’Armand, cela ressemblait étrangement à une histoire qu’il avait lue dans son enfance :
+C’est au cours d’une de ses **journées habituelles** qu’Armand entendit parler d’une décision prise par la **TSA — la travel sentry airlines**. L’agence avait instauré des **cadenas spéciaux pour les bagages internationaux** : des **verrous ordinaires**, mais que leurs agents pouvaient **ouvrir grâce à une clé maîtresse unique**. Aux yeux du public, cela semblait pratique. Aux yeux d’Armand, cela ressemblait étrangement à une histoire qu’il avait lue dans son enfance :
 
 « Un Anneau pour les gouverner tous,
 Un Anneau pour les trouver,
