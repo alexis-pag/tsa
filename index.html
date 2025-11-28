@@ -1,47 +1,45 @@
+<!DOCTYPE html>
 <html>
   <head>
+    <meta charset="utf-8" />
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+
+    <!-- Composant qui fait apparaître un objet -->
+    <script>
+      AFRAME.registerComponent("spawn-objet", {
+        schema: {
+          model: {type: "string"},          // id du glb (#monGLB)
+          position: {type: "string"},       // position de l'apparition
+          scale: {type: "string"}           // taille de l'objet
+        },
+
+        init: function () {
+          const e = document.createElement("a-entity");
+
+          e.setAttribute("gltf-model", this.data.model);
+          e.setAttribute("position", this.data.position || "0 1 -3");
+          e.setAttribute("scale", this.data.scale || "1 1 1");
+
+          this.el.appendChild(e);
+        }
+      });
+    </script>
   </head>
+
   <body>
     <a-scene>
 
+      <!-- ASSETS -->
+      <a-assets>
+        <!-- Mets ici ton propre fichier GLB -->
+        <a-asset-item id="monGLB" src="assets/door.glb"></a-asset-item>
+      </a-assets>
+
       <!-- Caméra -->
-      <a-entity camera look-controls wasd-controls position="0 1.6 0"></a-entity>
+      <a-entity camera position="0 1.6 0"></a-entity>
 
-      <!-- Sol -->
-      <a-box 
-        position="0 0 0"
-        width="4" height="0.1" depth="50"
-        color="#555">
-      </a-box>
-
-      <!-- Plafond -->
-      <a-box 
-        position="0 3 0"
-        width="4" height="0.1" depth="50"
-        color="#444">
-      </a-box>
-
-      <!-- Mur gauche -->
-      <a-box 
-        position="-2 1.5 0"
-        width="0.1" height="3" depth="50"
-        color="#333">
-      </a-box>
-
-      <!-- Mur droit -->
-      <a-box 
-        position="2 1.5 0"
-        width="0.1" height="3" depth="50"
-        color="#333">
-      </a-box>
-
-      <!-- Fond du couloir -->
-      <a-box 
-        position="0 1.5 -25"
-        width="4" height="3" depth="0.1"
-        color="#222">
-      </a-box>
+      <!-- Ici, l'objet GLB apparaît automatiquement -->
+      <a-entity spawn-objet="model: #monGLB; position: 0 1 -4; scale: 1 1 1"></a-entity>
 
     </a-scene>
   </body>
