@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Couloir TSA - 5 portes</title>
+  <title>Couloir TSA - Couloir solide avec 5 portes</title>
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <script>
     // Composant pour ouvrir la porte automatiquement quand le joueur s'approche
@@ -36,17 +36,28 @@
     <a-light type="ambient" color="#444"></a-light>
     <a-light type="point" position="0 3 0" intensity="0.3"></a-light>
 
-    <!-- Couloir regroupé -->
+    <!-- Couloir solide regroupé -->
     <a-entity id="couloir" position="0 0 0">
-      <a-box position="0 1.5 0" depth="20" height="3" width="5" color="#000" side="back"></a-box>
+      <!-- Sol -->
+      <a-box position="0 0 0" width="5" depth="20" height="0.1" color="#111"></a-box>
+      <!-- Plafond -->
+      <a-box position="0 3 0" width="5" depth="20" height="0.1" color="#111" side="back"></a-box>
+      <!-- Mur gauche -->
+      <a-box position="-2.5 1.5 0" width="0.1" depth="20" height="3" color="#111" side="back"></a-box>
+      <!-- Mur droit -->
+      <a-box position="2.5 1.5 0" width="0.1" depth="20" height="3" color="#111" side="back"></a-box>
+      <!-- Mur arrière -->
+      <a-box position="0 1.5 -10" width="5" height="3" depth="0.1" color="#111" side="back"></a-box>
+      <!-- Mur avant -->
+      <a-box position="0 1.5 10" width="5" height="3" depth="0.1" color="#111" side="back"></a-box>
     </a-entity>
 
-    <!-- Portes regroupées -->
+    <!-- Toutes les portes regroupées -->
     <a-entity id="portes" position="0 0 0">
       <script>
         const portesEntity = document.querySelector('#portes');
         const numberOfDoors = 5;
-        const startZ = -8;
+        const startZ = 8; // portes à l'intérieur du couloir
         const spacing = 3;
         for (let i = 0; i < numberOfDoors; i++) {
           const zPos = startZ - i * spacing;
@@ -73,7 +84,7 @@
     </a-entity>
 
     <!-- Camera / joueur -->
-    <a-entity id="player" position="0 1.6 2" camera wasd-controls look-controls>
+    <a-entity id="player" position="0 1.6 9" camera wasd-controls look-controls>
       <a-camera>
         <a-cursor></a-cursor>
       </a-camera>
@@ -86,8 +97,8 @@
         const zone = document.querySelector(`#teleport${i}`);
         zone.addEventListener('mouseenter', () => {
           console.log(`Franchi porte ${i}`);
-          // Téléportation plus loin dans le couloir
-          player.setAttribute('position', { x: 0, y: 1.6, z: -15 - i*2 });
+          // Téléportation temporaire plus loin dans le couloir
+          player.setAttribute('position', { x: 0, y: 1.6, z: -5 - i*2 });
         });
       }
     </script>
