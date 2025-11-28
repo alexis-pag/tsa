@@ -5,7 +5,7 @@ Dans une grande ville moderne, le flux constant des voyageurs était surveillé 
 Parmi ceux qui veillaient au bon fonctionnement de tout cela, il y avait un **douanier** nommé Armand. Il travaillait depuis longtemps et connaissait les règles par cœur. Chaque objet, chaque bagage, chaque document avait son importance. Armand avait appris à reconnaître ce qui semblait normal… et ce qui semblait étrange.
 
 ## **[TSA]**
-Un matin, un événement fit brusquement changer les choses. La **TSA** (**Transportation Security Administration**) annonça qu’elle utilisait depuis des années des cadenas spéciaux pour les voyageurs. Ces cadenas pouvaient se fermer comme n’importe lesquels, mais ils avaient quelque chose de particulier : la TSA possédait une **clé maîtresse**, capable d’ouvrir absolument tous ces cadenas.
+Un matin, un événement fit brusquement changer les choses. La **TSA** (**Travel Sentry Approved**) annonça qu’elle utilisait depuis des années des cadenas spéciaux pour les voyageurs. Ces cadenas pouvaient se fermer comme n’importe lesquels, mais ils avaient quelque chose de particulier : la TSA possédait une **clé maîtresse**, capable d’ouvrir absolument tous ces cadenas.
 
 Beaucoup trouvèrent cela pratique. Armand, lui, fronça les sourcils. Une clé capable d’ouvrir toutes les protections ? Cela ressemblait trop à une légende qu’il avait lue dans sa jeunesse.
 
