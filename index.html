@@ -4,65 +4,91 @@
   <meta charset="UTF-8">
   <title>Couloir TSA - Couloir solide avec 5 portes</title>
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+
+  <!-- Composant : ouverture automatique -->
   <script>
-    // Composant pour ouvrir la porte automatiquement quand le joueur s'approche
     AFRAME.registerComponent('open-on-approach', {
       schema: { distance: { type: 'number', default: 2 } },
       tick: function () {
         const player = document.querySelector('#player');
         const doorPos = this.el.object3D.position;
         const playerPos = player.object3D.position;
+
         const dist = Math.sqrt(
           Math.pow(playerPos.x - doorPos.x, 2) +
           Math.pow(playerPos.z - doorPos.z, 2)
         );
+
         if (dist < this.data.distance) {
-          this.el.setAttribute('rotation', '0 90 0'); // ouvre la porte
+          this.el.setAttribute('rotation', '0 90 0');
         } else {
-          this.el.setAttribute('rotation', '0 0 0'); // ferme la porte
+          this.el.setAttribute('rotation', '0 0 0');
         }
       }
     });
   </script>
+
+  <!-- Composant : limite du look vertical -->
+  <script>
+    AFRAME.registerComponent('limit-look', {
+      tick: function () {
+        const rotation = this.el.getAttribute('rotation');
+        const minPitch = -80;
+        const maxPitch = 80;
+
+        if (rotation.x < minPitch) rotation.x = minPitch;
+        if (rotation.x > maxPitch) rotation.x = maxPitch;
+
+        this.el.setAttribute('rotation', rotation);
+      }
+    });
+  </script>
+
+  <!-- Composant : empêche la tête de se pencher (roll) -->
+  <script>
+    AFRAME.registerComponent('no-roll', {
+      tick: function () {
+        const rot = this.el.getAttribute('rotation');
+        rot.z = 0;
+        this.el.setAttribute('rotation', rot);
+      }
+    });
+  </script>
+
 </head>
 <body>
   <a-scene>
+
     <!-- Assets -->
     <a-assets>
       <a-asset-item id="doorModel" src="assets/door.glb"></a-asset-item>
     </a-assets>
 
-    <!-- Lumières pour voir l’intérieur correctement -->
+    <!-- Lumières -->
     <a-light type="ambient" color="#444"></a-light>
     <a-light type="point" position="0 3 0" intensity="0.3"></a-light>
 
-    <!-- Couloir solide regroupé -->
+    <!-- Couloir solide -->
     <a-entity id="couloir" position="0 0 0">
-      <!-- Sol -->
-      <a-box position="0 0 0" width="5" depth="20" height="0.1" color="#111"></a-box>
-      <!-- Plafond -->
-      <a-box position="0 3 0" width="5" depth="20" height="0.1" color="#111" side="back"></a-box>
-      <!-- Mur gauche -->
+      <a-box position="0 0 0"   width="5" depth="20" height="0.1" color="#111"></a-box>
+      <a-box position="0 3 0"   width="5" depth="20" height="0.1" color="#111" side="back"></a-box>
       <a-box position="-2.5 1.5 0" width="0.1" depth="20" height="3" color="#111" side="back"></a-box>
-      <!-- Mur droit -->
-      <a-box position="2.5 1.5 0" width="0.1" depth="20" height="3" color="#111" side="back"></a-box>
-      <!-- Mur arrière -->
-      <a-box position="0 1.5 -10" width="5" height="3" depth="0.1" color="#111" side="back"></a-box>
-      <!-- Mur avant -->
-      <a-box position="0 1.5 10" width="5" height="3" depth="0.1" color="#111" side="back"></a-box>
+      <a-box position="2.5 1.5 0"  width="0.1" depth="20" height="3" color="#111" side="back"></a-box>
+      <a-box position="0 1.5 -10"  width="5" height="3" depth="0.1" color="#111" side="back"></a-box>
+      <a-box position="0 1.5 10"   width="5" height="3" depth="0.1" color="#111" side="back"></a-box>
     </a-entity>
 
-    <!-- Toutes les portes regroupées -->
+    <!-- Portes -->
     <a-entity id="portes" position="0 0 0">
       <script>
         const portesEntity = document.querySelector('#portes');
         const numberOfDoors = 5;
-        const startZ = 8; // portes à l'intérieur du couloir
+        const startZ = 8;
         const spacing = 3;
+
         for (let i = 0; i < numberOfDoors; i++) {
           const zPos = startZ - i * spacing;
 
-          // Porte GLB
           const door = document.createElement('a-entity');
           door.setAttribute('gltf-model', '#doorModel');
           door.setAttribute('position', `0 0 ${zPos}`);
@@ -70,7 +96,6 @@
           door.setAttribute('open-on-approach', 'distance:2');
           portesEntity.appendChild(door);
 
-          // Zone invisible pour téléportation
           const zone = document.createElement('a-box');
           zone.setAttribute('position', `0 1.6 ${zPos}`);
           zone.setAttribute('depth', '1');
@@ -83,25 +108,23 @@
       </script>
     </a-entity>
 
-    <!-- Camera / joueur -->
-    <a-entity id="player" position="0 1.6 9" camera wasd-controls look-controls>
-      <a-camera>
-        <a-cursor></a-cursor>
-      </a-camera>
+    <!-- Player -->
+    <a-entity id="player" position="0 1.6 9" wasd-controls>
+      <a-entity camera look-controls limit-look no-roll></a-entity>
     </a-entity>
 
     <!-- Téléportation -->
     <script>
       const player = document.querySelector('#player');
+
       for (let i = 1; i <= 5; i++) {
         const zone = document.querySelector(`#teleport${i}`);
         zone.addEventListener('mouseenter', () => {
-          console.log(`Franchi porte ${i}`);
-          // Téléportation temporaire plus loin dans le couloir
           player.setAttribute('position', { x: 0, y: 1.6, z: -5 - i*2 });
         });
       }
     </script>
+
   </a-scene>
 </body>
 </html>
