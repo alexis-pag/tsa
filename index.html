@@ -2,71 +2,45 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Scène TSA avec noms visibles</title>
+  <title>Scène TSA avec noms dans l'inspecteur</title>
   <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
 </head>
 <body>
   <a-scene>
 
+    <!-- Préchargement des assets -->
     <a-assets>
-      <a-asset-item id="aeroport" src="assets/aeroport.glb"></a-asset-item>
-      <a-asset-item id="avion" src="assets/avion.glb"></a-asset-item>
-      <a-asset-item id="cle" src="assets/cle.glb"></a-asset-item>
-      <a-asset-item id="cle2" src="assets/cle2.glb"></a-asset-item>
-      <a-asset-item id="cle3" src="assets/cle3.glb"></a-asset-item>
-      <a-asset-item id="cylindre" src="assets/cylindre.obj"></a-asset-item>
-      <a-asset-item id="douanier1" src="assets/douanier1.glb"></a-asset-item>
-      <a-asset-item id="douanier2" src="assets/douanier2.glb"></a-asset-item>
-      <a-asset-item id="lockpick" src="assets/lockpick.glb"></a-asset-item>
-      <a-asset-item id="logo_tsa" src="assets/logo_tsa.glb"></a-asset-item>
-      <a-asset-item id="voiture1" src="assets/voiture1.glb"></a-asset-item>
-      <a-asset-item id="voiture2" src="assets/voiture2.glb"></a-asset-item>
-      <a-asset-item id="voiture3" src="assets/voiture3.glb"></a-asset-item>
-      <a-asset-item id="voleur" src="assets/voleur.glb"></a-asset-item>
+      <a-asset-item id="aeroportAsset" src="assets/aeroport.glb"></a-asset-item>
+      <a-asset-item id="avionAsset" src="assets/avion.glb"></a-asset-item>
+      <a-asset-item id="cleAsset" src="assets/cle.glb"></a-asset-item>
+      <a-asset-item id="cle2Asset" src="assets/cle2.glb"></a-asset-item>
+      <a-asset-item id="cle3Asset" src="assets/cle3.glb"></a-asset-item>
+      <a-asset-item id="cylindreAsset" src="assets/cylindre.obj"></a-asset-item>
+      <a-asset-item id="douanier1Asset" src="assets/douanier1.glb"></a-asset-item>
+      <a-asset-item id="douanier2Asset" src="assets/douanier2.glb"></a-asset-item>
+      <a-asset-item id="lockpickAsset" src="assets/lockpick.glb"></a-asset-item>
+      <a-asset-item id="logoTsaAsset" src="assets/logo_tsa.glb"></a-asset-item>
+      <a-asset-item id="voiture1Asset" src="assets/voiture1.glb"></a-asset-item>
+      <a-asset-item id="voiture2Asset" src="assets/voiture2.glb"></a-asset-item>
+      <a-asset-item id="voiture3Asset" src="assets/voiture3.glb"></a-asset-item>
+      <a-asset-item id="voleurAsset" src="assets/voleur.glb"></a-asset-item>
     </a-assets>
 
-    <!-- Modèles avec nom visible -->
-    <a-entity gltf-model="#aeroport" position="0 0 -10" scale="2 2 2"></a-entity>
-    <a-text value="Aéroport" position="0 3 -10" color="#000" align="center"></a-text>
-
-    <a-entity gltf-model="#avion" position="5 1 -8" scale="1 1 1"></a-entity>
-    <a-text value="Avion" position="5 3 -8" color="#000" align="center"></a-text>
-
-    <a-entity gltf-model="#cle" position="-2 0.5 -3" scale="0.5 0.5 0.5"></a-entity>
-    <a-text value="Clé" position="-2 2 -3" color="#000" align="center"></a-text>
-
-    <a-entity gltf-model="#cle2" position="-1 0.5 -3" scale="0.5 0.5 0.5"></a-entity>
-    <a-text value="Clé2" position="-1 2 -3" color="#000" align="center"></a-text>
-
-    <a-entity gltf-model="#cle3" position="0 0.5 -3" scale="0.5 0.5 0.5"></a-entity>
-    <a-text value="Clé3" position="0 2 -3" color="#000" align="center"></a-text>
-
-    <a-entity obj-model="obj: #cylindre" position="2 0.5 -3" scale="0.5 0.5 0.5"></a-entity>
-    <a-text value="Cylindre" position="2 2 -3" color="#000" align="center"></a-text>
-
-    <a-entity gltf-model="#douanier1" position="-5 0 -5" scale="1 1 1"></a-entity>
-    <a-text value="Douanier1" position="-5 2 -5" color="#000" align="center"></a-text>
-
-    <a-entity gltf-model="#douanier2" position="-3 0 -5" scale="1 1 1"></a-entity>
-    <a-text value="Douanier2" position="-3 2 -5" color="#000" align="center"></a-text>
-
-    <a-entity gltf-model="#lockpick" position="1 0.5 -3" scale="0.5 0.5 0.5"></a-entity>
-    <a-text value="Lockpick" position="1 2 -3" color="#000" align="center"></a-text>
-
-    <a-entity gltf-model="#logo_tsa" position="0 5 -10" scale="3 3 3"></a-entity>
-    <a-text value="Logo TSA" position="0 8 -10" color="#000" align="center"></a-text>
-
-    <a-entity gltf-model="#voiture1" position="3 0 -4" scale="1 1 1"></a-entity>
-    <a-text value="Voiture1" position="3 2 -4" color="#000" align="center"></a-text>
-
-    <a-entity gltf-model="#voiture2" position="4 0 -4" scale="1 1 1"></a-entity>
-    <a-text value="Voiture2" position="4 2 -4" color="#000" align="center"></a-text>
-
-    <a-entity gltf-model="#voiture3" position="5 0 -4" scale="1 1 1"></a-entity>
-    <a-text value="Voiture3" position="5 2 -4" color="#000" align="center"></a-text>
-
-    <a-entity gltf-model="#voleur" position="0 0 -2" scale="1 1 1"></a-entity>
-    <a-text value="Voleur" position="0 2 -2" color="#000" align="center"></a-text>
+    <!-- Modèles avec id pour l'inspecteur -->
+    <a-entity id="Aeroport" gltf-model="#aeroportAsset" position="0 0 -10" scale="2 2 2"></a-entity>
+    <a-entity id="Avion" gltf-model="#avionAsset" position="5 1 -8" scale="1 1 1"></a-entity>
+    <a-entity id="Cle" gltf-model="#cleAsset" position="-2 0.5 -3" scale="0.5 0.5 0.5"></a-entity>
+    <a-entity id="Cle2" gltf-model="#cle2Asset" position="-1 0.5 -3" scale="0.5 0.5 0.5"></a-entity>
+    <a-entity id="Cle3" gltf-model="#cle3Asset" position="0 0.5 -3" scale="0.5 0.5 0.5"></a-entity>
+    <a-entity id="Cylindre" obj-model="obj: #cylindreAsset" position="2 0.5 -3" scale="0.5 0.5 0.5"></a-entity>
+    <a-entity id="Douanier1" gltf-model="#douanier1Asset" position="-5 0 -5" scale="1 1 1"></a-entity>
+    <a-entity id="Douanier2" gltf-model="#douanier2Asset" position="-3 0 -5" scale="1 1 1"></a-entity>
+    <a-entity id="Lockpick" gltf-model="#lockpickAsset" position="1 0.5 -3" scale="0.5 0.5 0.5"></a-entity>
+    <a-entity id="Logo_TSA" gltf-model="#logoTsaAsset" position="0 5 -10" scale="3 3 3"></a-entity>
+    <a-entity id="Voiture1" gltf-model="#voiture1Asset" position="3 0 -4" scale="1 1 1"></a-entity>
+    <a-entity id="Voiture2" gltf-model="#voiture2Asset" position="4 0 -4" scale="1 1 1"></a-entity>
+    <a-entity id="Voiture3" gltf-model="#voiture3Asset" position="5 0 -4" scale="1 1 1"></a-entity>
+    <a-entity id="Voleur" gltf-model="#voleurAsset" position="0 0 -2" scale="1 1 1"></a-entity>
 
     <!-- Caméra et ciel -->
     <a-entity camera position="0 1.6 5" look-controls></a-entity>
