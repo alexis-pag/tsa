@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Vue orbitale autour de l'objet</title>
+  <title>Objets visibles automatiquement</title>
   <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
   <style>
     #controls {
@@ -62,16 +62,13 @@
     <a-entity id="playerCamera" camera position="0 2 5" look-controls="enabled: true"></a-entity>
   </a-entity>
 
-  <!-- Sol pour référence visuelle -->
+  <!-- Sol -->
   <a-plane rotation="-90 0 0" width="20" height="20" color="#7BC8A4" position="0 0 0"></a-plane>
-
   <a-sky color="#87CEEB"></a-sky>
 
 </a-scene>
 
 <script>
-  const uniformScale = "1 1 1";
-
   const assets = [
     {id: "aeroportAsset", name: "Aéroport"},
     {id: "avionAsset", name: "Avion"},
@@ -95,7 +92,7 @@
   const label = document.getElementById('label');
 
   button.addEventListener('click', () => {
-    if(index >= assets.length) index = 0; // boucle
+    if(index >= assets.length) index = 0;
 
     // Supprime l'objet précédent
     while(container.firstChild){
@@ -105,15 +102,20 @@
     const data = assets[index];
     const entity = document.createElement('a-entity');
     entity.setAttribute('id', data.name.replace(/\s+/g, ''));
-
-    // Position de l'objet au centre, sur le sol
     entity.setAttribute('position', "0 0 0");
-    entity.setAttribute('scale', "0 0 0"); // pour animation
+    entity.setAttribute('scale', "0 0 0");
 
-    // Animation cartoon
+    // Ajout du modèle
+    if(data.obj){
+      entity.setAttribute('obj-model', `obj: #${data.id}`);
+    } else {
+      entity.setAttribute('gltf-model', `#${data.id}`);
+    }
+
+    // Ajouter animation cartoon
     entity.setAttribute('animation__scale', {
       property: 'scale',
-      to: uniformScale,
+      to: "1 1 1",
       dur: 600,
       easing: 'easeOutElastic'
     });
@@ -125,17 +127,19 @@
       easing: 'easeOutElastic'
     });
 
-    if(data.obj){
-      entity.setAttribute('obj-model', `obj: #${data.id}`);
-    } else {
-      entity.setAttribute('gltf-model', `#${data.id}`);
-    }
-
     container.appendChild(entity);
 
-    // Met à jour le label
-    label.textContent = data.name;
+    // Redimensionnement automatique après chargement
+    entity.addEventListener('model-loaded', () => {
+      const box = new THREE.Box3().setFromObject(entity.getObject3D('mesh'));
+      const size = new THREE.Vector3();
+      box.getSize(size);
+      const maxDim = Math.max(size.x, size.y, size.z);
+      const scaleFactor = 2 / maxDim; // ajuster pour une taille visible
+      entity.setAttribute('scale', `${scaleFactor} ${scaleFactor} ${scaleFactor}`);
+    });
 
+    label.textContent = data.name;
     index++;
   });
 </script>
