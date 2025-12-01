@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Objets avec scale par objet</title>
+  <title>Objets complets</title>
   <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
   <style>
     #controls { position: absolute; top: 20px; left: 20px; z-index: 100; }
@@ -20,23 +20,6 @@
 
 <a-scene>
 
-  <a-assets>
-    <a-asset-item id="aeroportAsset" src="assets/aeroport.glb"></a-asset-item>
-    <a-asset-item id="avionAsset" src="assets/avion.glb"></a-asset-item>
-    <a-asset-item id="cleAsset" src="assets/cle.glb"></a-asset-item>
-    <a-asset-item id="cle2Asset" src="assets/cle2.glb"></a-asset-item>
-    <a-asset-item id="cle3Asset" src="assets/cle3.glb"></a-asset-item>
-    <a-asset-item id="cylindreAsset" src="assets/cylindre.obj"></a-asset-item>
-    <a-asset-item id="douanier1Asset" src="assets/douanier1.glb"></a-asset-item>
-    <a-asset-item id="douanier2Asset" src="assets/douanier2.glb"></a-asset-item>
-    <a-asset-item id="lockpickAsset" src="assets/lockpick.glb"></a-asset-item>
-    <a-asset-item id="logoTsaAsset" src="assets/logo_tsa.glb"></a-asset-item>
-    <a-asset-item id="voiture1Asset" src="assets/voiture1.glb"></a-asset-item>
-    <a-asset-item id="voiture2Asset" src="assets/voiture2.glb"></a-asset-item>
-    <a-asset-item id="voiture3Asset" src="assets/voiture3.glb"></a-asset-item>
-    <a-asset-item id="voleurAsset" src="assets/voleur.glb"></a-asset-item>
-  </a-assets>
-
   <!-- Conteneur pour l'objet -->
   <a-entity id="currentObject"></a-entity>
 
@@ -52,21 +35,21 @@
 </a-scene>
 
 <script>
-const assets = [
-  {id: "aeroportAsset", name: "Aéroport", scale: "0.1 0.1 0.1"},
-  {id: "avionAsset", name: "Avion", scale: "0.15 0.15 0.15", position: "0 1.27788 0"},
-  {id: "cleAsset", name: "Clé", scale: "1 1 1"},
-  {id: "cle2Asset", name: "Clé2", scale: "1 1 1"},
-  {id: "cle3Asset", name: "Clé3", scale: "1 1 1"},
-  {id: "cylindreAsset", name: "Cylindre", obj:true, scale: "1 1 1"},
-  {id: "douanier1Asset", name: "Douanier1", scale: "1 1 1"},
-  {id: "douanier2Asset", name: "Douanier2", scale: "1 1 1"},
-  {id: "lockpickAsset", name: "Lockpick", scale: "1 1 1"},
-  {id: "logoTsaAsset", name: "Logo TSA", scale: "1 1 1"},
-  {id: "voiture1Asset", name: "Voiture1", scale: "1 1 1"},
-  {id: "voiture2Asset", name: "Voiture2", scale: "1 1 1"},
-  {id: "voiture3Asset", name: "Voiture3", scale: "1 1 1"},
-  {id: "voleurAsset", name: "Voleur", scale: "1 1 1"}
+const objects = [
+  {id: "Aéroport", model: "assets/aeroport.glb", position: "0 0 0", scale: "0.02 0.02 0.02"},
+  {id: "Avion", model: "assets/avion.glb", position: "0 1.27788 0", scale: "0.15 0.15 0.15"},
+  {id: "Clé", model: "assets/cle.glb", position: "0 0 0", scale: "0.02 0.02 0.02"},
+  {id: "Clé2", model: "assets/cle2.glb", position: "0 0 0", scale: "0.02 0.02 0.02"},
+  {id: "Clé3", model: "assets/cle3.glb", position: "0 0 0", scale: "0.02 0.02 0.02"},
+  {id: "Cylindre", model: "assets/cylindre.obj", position: "0 0 0", scale: "0.02 0.02 0.02"},
+  {id: "Douanier1", model: "assets/douanier1.glb", position: "0 0 0", scale: "0.02 0.02 0.02"},
+  {id: "Douanier2", model: "assets/douanier2.glb", position: "0 0 0", scale: "0.02 0.02 0.02"},
+  {id: "Lockpick", model: "assets/lockpick.glb", position: "0 0 0", scale: "0.02 0.02 0.02"},
+  {id: "Logo TSA", model: "assets/logo_tsa.glb", position: "0 0 0", scale: "0.02 0.02 0.02"},
+  {id: "Voiture1", model: "assets/voiture1.glb", position: "0 0 0", scale: "0.02 0.02 0.02"},
+  {id: "Voiture2", model: "assets/voiture2.glb", position: "0 0 0", scale: "0.02 0.02 0.02"},
+  {id: "Voiture3", model: "assets/voiture3.glb", position: "0 0 0", scale: "0.02 0.02 0.02"},
+  {id: "Voleur", model: "assets/voleur.glb", position: "0 0 0", scale: "0.02 0.02 0.02"}
 ];
 
 let index = 0;
@@ -75,32 +58,27 @@ const container = document.getElementById('currentObject');
 const label = document.getElementById('label');
 
 button.addEventListener('click', () => {
-  if(index >= assets.length) index = 0;
+  if(index >= objects.length) index = 0;
 
-  // Supprime l'objet précédent
   while(container.firstChild) container.removeChild(container.firstChild);
 
-  const data = assets[index];
+  const data = objects[index];
   const entity = document.createElement('a-entity');
-  entity.setAttribute('id', data.name.replace(/\s+/g, ''));
-  entity.setAttribute('position', "0 0 0");
-
-  // Appliquer la scale définie dans l'objet
+  entity.setAttribute('id', data.id);
+  entity.setAttribute('position', data.position);
   entity.setAttribute('scale', data.scale);
 
-  if(data.obj){
-    entity.setAttribute('obj-model', `obj: #${data.id}`);
+  if(data.model.endsWith(".obj")){
+    entity.setAttribute('obj-model', `obj: url(${data.model})`);
   } else {
-    entity.setAttribute('gltf-model', `#${data.id}`);
+    entity.setAttribute('gltf-model', data.model);
   }
 
-  // Animation cartoon
-  entity.setAttribute('animation__scale', { property: 'scale', to: data.scale, dur: 600, easing: 'easeOutElastic' });
-  entity.setAttribute('animation__bounce', { property: 'position', from: "0 2 0", to: "0 0 0", dur: 600, easing: 'easeOutElastic' });
+  entity.setAttribute('animation__scale', `property: scale; to: ${data.scale}; dur: 600; easing: easeOutElastic`);
+  entity.setAttribute('animation__bounce', `property: position; from: 0 2 0; to: ${data.position}; dur: 600; easing: easeOutElastic`);
 
   container.appendChild(entity);
-
-  label.textContent = data.name;
+  label.textContent = data.id;
   index++;
 });
 </script>
