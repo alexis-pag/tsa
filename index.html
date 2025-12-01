@@ -1,87 +1,107 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>Objets complets</title>
-  <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
-  <style>
-    #controls { position: absolute; top: 20px; left: 20px; z-index: 100; }
-    button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
-    #label { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-             font-size: 20px; font-weight: bold; color: #ff4081; text-shadow: 1px 1px 3px #000; }
-  </style>
-</head>
-<body>
+<html>
+  <head>
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <style>
+      #spawnBtn {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 15px 25px;
+        font-size: 18px;
+        background: #4a7;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
 
-<div id="controls">
-  <button id="nextObject">Afficher le prochain objet</button>
-</div>
-<div id="label"></div>
+  <body>
+    <button id="spawnBtn">Objet suivant</button>
 
-<a-scene>
+    <a-scene>
+      <!-- Caméra qui tourne autour de l'objet -->
+      <a-entity id="camRig" position="0 1.6 3">
+        <a-camera></a-camera>
+      </a-entity>
 
-  <!-- Conteneur pour l'objet -->
-  <a-entity id="currentObject"></a-entity>
+      <a-entity id="objectContainer"></a-entity>
 
-  <!-- Pivot pour la caméra orbitale -->
-  <a-entity id="cameraPivot" rotation="0 0 0"
-            animation="property: rotation; to: 0 360 0; loop: true; dur: 20000; easing: linear">
-    <a-entity id="playerCamera" camera position="0 2 5" look-controls="enabled: true"></a-entity>
-  </a-entity>
+      <a-sky color="#ECECEC"></a-sky>
+    </a-scene>
 
-  <a-plane rotation="-90 0 0" width="20" height="20" color="#7BC8A4" position="0 0 0"></a-plane>
-  <a-sky color="#87CEEB"></a-sky>
+    <script>
+      const objects = [
+        {
+          id: "Clé",
+          model: "assets/cle.glb",
+          position: "0 0.24814 0",
+          scale: "0.02 0.02 0.02",
+          rotation: {x: 0, y: 0, z: 0}
+        },
+        {
+          id: "Lockpick",
+          model: "assets/lockpick.glb",
+          position: "0 0.11829 0",
+          scale: "0.02 0.02 0.02",
+          rotation: {x: -90, y: 180, z: 180}
+        },
+        {
+          id: "Clé2",
+          model: "assets/cle2.glb",
+          position: "0 0.14946 0",
+          scale: "0.1 0.1 0.1",
+          rotation: {x: 15.45, y: 1.13, z: -25.86}
+        }
+      ];
 
-</a-scene>
+      let index = 0;
 
-<script>
-const objects = [
-  {id: "Aéroport", model: "assets/aeroport.glb", position: "0 0 0", scale: "0.1 0.1 0.1"},
-  {id: "Avion", model: "assets/avion.glb", position: "0 1.27788 0", scale: "0.15 0.15 0.15"},
-  {id: "Clé", model: "assets/cle.glb", position: "0 0.24814 0", scale: "60 60 60", targetScale: "0.02 0.02 0.02"},
-   {id: "Clé2", model: "assets/cle2.glb", position: "0 0.14946 0", scale: "0.1 0.1 0.1", rotation: "15.449233987907517 1.137321223334684 -25.8621689566151"},
-  {id: "Clé3", model: "assets/cle3.glb", position: "0 0 0", scale: "0.02 0.02 0.02"},
-  {id: "Cylindre", model: "assets/cylindre.obj", position: "0 0 0", scale: "0.02 0.02 0.02"},
-  {id: "Douanier1", model: "assets/douanier1.glb", position: "0 0 0", scale: "0.02 0.02 0.02"},
-  {id: "Douanier2", model: "assets/douanier2.glb", position: "0 0 0", scale: "0.02 0.02 0.02"},
-  {id: "Lockpick", model: "assets/lockpick.glb", position: "0 0.11829 0", scale: "2 2 2", targetScale: "0.02 0.02 0.02", rotation: "-89.77847579243408 179.9998479605043 179.9998479605043"},
-  {id: "Logo TSA", model: "assets/logo_tsa.glb", position: "0 0 0", scale: "0.02 0.02 0.02"},
-  {id: "Voiture1", model: "assets/voiture1.glb", position: "0 0 0", scale: "0.02 0.02 0.02"},
-  {id: "Voiture2", model: "assets/voiture2.glb", position: "0 0 0", scale: "0.02 0.02 0.02"},
-  {id: "Voiture3", model: "assets/voiture3.glb", position: "0 0 0", scale: "0.02 0.02 0.02"},
-  {id: "Voleur", model: "assets/voleur.glb", position: "0 0 0", scale: "0.02 0.02 0.02"}
-];
+      function spawnNext() {
+        const container = document.getElementById("objectContainer");
+        
+        container.innerHTML = ""; // supprime l’objet précédent
+        
+        const obj = objects[index];
 
-let index = 0;
-const button = document.getElementById('nextObject');
-const container = document.getElementById('currentObject');
-const label = document.getElementById('label');
+        const entity = document.createElement("a-entity");
+        entity.setAttribute("id", obj.id);
+        entity.setAttribute("position", obj.position);
+        entity.setAttribute("scale", obj.scale);
+        entity.setAttribute("rotation", `${obj.rotation.x} ${obj.rotation.y} ${obj.rotation.z}`);
+        entity.setAttribute("gltf-model", obj.model);
 
-button.addEventListener('click', () => {
-  if(index >= objects.length) index = 0;
+        // Animation cartoon
+        entity.setAttribute("animation__scale", 
+          "dur: 600; easing: easeOutElastic; property: scale; to: " + obj.scale
+        );
 
-  while(container.firstChild) container.removeChild(container.firstChild);
+        entity.setAttribute("animation__bounce", 
+          "dur: 600; easing: easeOutElastic; from: 0 2 0; property: position; to: " + obj.position
+        );
 
-  const data = objects[index];
-  const entity = document.createElement('a-entity');
-  entity.setAttribute('id', data.id);
-  entity.setAttribute('position', data.position);
-  entity.setAttribute('scale', data.scale);
+        container.appendChild(entity);
 
-  if(data.model.endsWith(".obj")){
-    entity.setAttribute('obj-model', `obj: url(${data.model})`);
-  } else {
-    entity.setAttribute('gltf-model', data.model);
-  }
+        index = (index + 1) % objects.length;
+      }
 
-  entity.setAttribute('animation__scale', `property: scale; to: ${data.scale}; dur: 600; easing: easeOutElastic`);
-  entity.setAttribute('animation__bounce', `property: position; from: 0 2 0; to: ${data.position}; dur: 600; easing: easeOutElastic`);
+      document.getElementById("spawnBtn").onclick = spawnNext;
 
-  container.appendChild(entity);
-  label.textContent = data.id;
-  index++;
-});
-</script>
-
-</body>
+      // Rotation automatique de la caméra
+      let angle = 0;
+      function rotateCamera() {
+        angle += 0.3;
+        const rad = angle * Math.PI / 180;
+        const cam = document.getElementById("camRig");
+        const x = Math.sin(rad) * 3;
+        const z = Math.cos(rad) * 3;
+        cam.setAttribute("position", `${x} 1.6 ${z}`);
+        cam.setAttribute("rotation", `0 ${-angle} 0`);
+        requestAnimationFrame(rotateCamera);
+      }
+      rotateCamera();
+    </script>
+  </body>
 </html>
