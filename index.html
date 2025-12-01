@@ -2,30 +2,13 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Objets visibles automatiquement</title>
+  <title>Objets avec taille ajustée automatiquement</title>
   <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
   <style>
-    #controls {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      z-index: 100;
-    }
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    #label {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 20px;
-      font-weight: bold;
-      color: #ff4081;
-      text-shadow: 1px 1px 3px #000;
-    }
+    #controls { position: absolute; top: 20px; left: 20px; z-index: 100; }
+    button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+    #label { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+             font-size: 20px; font-weight: bold; color: #ff4081; text-shadow: 1px 1px 3px #000; }
   </style>
 </head>
 <body>
@@ -36,7 +19,6 @@
 <div id="label"></div>
 
 <a-scene>
-
   <a-assets>
     <a-asset-item id="aeroportAsset" src="assets/aeroport.glb"></a-asset-item>
     <a-asset-item id="avionAsset" src="assets/avion.glb"></a-asset-item>
@@ -57,91 +39,91 @@
   <!-- Conteneur pour l'objet actuel -->
   <a-entity id="currentObject"></a-entity>
 
-  <!-- Pivot de la caméra pour orbiter autour de l'objet -->
-  <a-entity id="cameraPivot" rotation="0 0 0" animation="property: rotation; to: 0 360 0; loop: true; dur: 20000; easing: linear">
+  <!-- Pivot pour faire orbiter la caméra autour de l'objet -->
+  <a-entity id="cameraPivot" rotation="0 0 0" 
+            animation="property: rotation; to: 0 360 0; loop: true; dur: 20000; easing: linear">
     <a-entity id="playerCamera" camera position="0 2 5" look-controls="enabled: true"></a-entity>
   </a-entity>
 
-  <!-- Sol -->
   <a-plane rotation="-90 0 0" width="20" height="20" color="#7BC8A4" position="0 0 0"></a-plane>
   <a-sky color="#87CEEB"></a-sky>
-
 </a-scene>
 
 <script>
-  const assets = [
-    {id: "aeroportAsset", name: "Aéroport"},
-    {id: "avionAsset", name: "Avion"},
-    {id: "cleAsset", name: "Clé"},
-    {id: "cle2Asset", name: "Clé2"},
-    {id: "cle3Asset", name: "Clé3"},
-    {id: "cylindreAsset", name: "Cylindre", obj:true},
-    {id: "douanier1Asset", name: "Douanier1"},
-    {id: "douanier2Asset", name: "Douanier2"},
-    {id: "lockpickAsset", name: "Lockpick"},
-    {id: "logoTsaAsset", name: "Logo TSA"},
-    {id: "voiture1Asset", name: "Voiture1"},
-    {id: "voiture2Asset", name: "Voiture2"},
-    {id: "voiture3Asset", name: "Voiture3"},
-    {id: "voleurAsset", name: "Voleur"}
-  ];
+const assets = [
+  {id: "aeroportAsset", name: "Aéroport"},
+  {id: "avionAsset", name: "Avion"},
+  {id: "cleAsset", name: "Clé"},
+  {id: "cle2Asset", name: "Clé2"},
+  {id: "cle3Asset", name: "Clé3"},
+  {id: "cylindreAsset", name: "Cylindre", obj:true},
+  {id: "douanier1Asset", name: "Douanier1"},
+  {id: "douanier2Asset", name: "Douanier2"},
+  {id: "lockpickAsset", name: "Lockpick"},
+  {id: "logoTsaAsset", name: "Logo TSA"},
+  {id: "voiture1Asset", name: "Voiture1"},
+  {id: "voiture2Asset", name: "Voiture2"},
+  {id: "voiture3Asset", name: "Voiture3"},
+  {id: "voleurAsset", name: "Voleur"}
+];
 
-  let index = 0;
-  const button = document.getElementById('nextObject');
-  const container = document.getElementById('currentObject');
-  const label = document.getElementById('label');
+let index = 0;
+const button = document.getElementById('nextObject');
+const container = document.getElementById('currentObject');
+const label = document.getElementById('label');
 
-  button.addEventListener('click', () => {
-    if(index >= assets.length) index = 0;
+button.addEventListener('click', () => {
+  if(index >= assets.length) index = 0;
 
-    // Supprime l'objet précédent
-    while(container.firstChild){
-      container.removeChild(container.firstChild);
-    }
+  // Supprime l'objet précédent
+  while(container.firstChild) container.removeChild(container.firstChild);
 
-    const data = assets[index];
-    const entity = document.createElement('a-entity');
-    entity.setAttribute('id', data.name.replace(/\s+/g, ''));
-    entity.setAttribute('position', "0 0 0");
-    entity.setAttribute('scale', "0 0 0");
+  const data = assets[index];
+  const entity = document.createElement('a-entity');
+  entity.setAttribute('id', data.name.replace(/\s+/g, ''));
+  entity.setAttribute('position', "0 0 0");
+  entity.setAttribute('scale', "0 0 0");
 
-    // Ajout du modèle
-    if(data.obj){
-      entity.setAttribute('obj-model', `obj: #${data.id}`);
-    } else {
-      entity.setAttribute('gltf-model', `#${data.id}`);
-    }
+  // Ajouter le modèle
+  if(data.obj){
+    entity.setAttribute('obj-model', `obj: #${data.id}`);
+  } else {
+    entity.setAttribute('gltf-model', `#${data.id}`);
+  }
 
-    // Ajouter animation cartoon
-    entity.setAttribute('animation__scale', {
-      property: 'scale',
-      to: "1 1 1",
-      dur: 600,
-      easing: 'easeOutElastic'
-    });
-    entity.setAttribute('animation__bounce', {
-      property: 'position',
-      from: "0 2 0",
-      to: "0 0 0",
-      dur: 600,
-      easing: 'easeOutElastic'
-    });
-
-    container.appendChild(entity);
-
-    // Redimensionnement automatique après chargement
-    entity.addEventListener('model-loaded', () => {
-      const box = new THREE.Box3().setFromObject(entity.getObject3D('mesh'));
-      const size = new THREE.Vector3();
-      box.getSize(size);
-      const maxDim = Math.max(size.x, size.y, size.z);
-      const scaleFactor = 2 / maxDim; // ajuster pour une taille visible
-      entity.setAttribute('scale', `${scaleFactor} ${scaleFactor} ${scaleFactor}`);
-    });
-
-    label.textContent = data.name;
-    index++;
+  // Animation cartoon
+  entity.setAttribute('animation__scale', {
+    property: 'scale',
+    to: "1 1 1",
+    dur: 600,
+    easing: 'easeOutElastic'
   });
+  entity.setAttribute('animation__bounce', {
+    property: 'position',
+    from: "0 2 0",
+    to: "0 0 0",
+    dur: 600,
+    easing: 'easeOutElastic'
+  });
+
+  container.appendChild(entity);
+
+  // Redimensionnement automatique une fois le modèle chargé
+  entity.addEventListener('model-loaded', () => {
+    const mesh = entity.getObject3D('mesh');
+    if (!mesh) return;
+    const box = new THREE.Box3().setFromObject(mesh);
+    const size = new THREE.Vector3();
+    box.getSize(size);
+    const maxDim = Math.max(size.x, size.y, size.z);
+    const targetSize = 2; // taille max devant la caméra
+    const scaleFactor = targetSize / maxDim;
+    entity.setAttribute('scale', `${scaleFactor} ${scaleFactor} ${scaleFactor}`);
+  });
+
+  label.textContent = data.name;
+  index++;
+});
 </script>
 
 </body>
