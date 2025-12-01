@@ -2,50 +2,143 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Scène TSA avec noms dans l'inspecteur</title>
+  <title>Vue orbitale autour de l'objet</title>
   <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+  <style>
+    #controls {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 100;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #label {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 20px;
+      font-weight: bold;
+      color: #ff4081;
+      text-shadow: 1px 1px 3px #000;
+    }
+  </style>
 </head>
 <body>
-  <a-scene>
 
-    <!-- Préchargement des assets -->
-    <a-assets>
-      <a-asset-item id="aeroportAsset" src="assets/aeroport.glb"></a-asset-item>
-      <a-asset-item id="avionAsset" src="assets/avion.glb"></a-asset-item>
-      <a-asset-item id="cleAsset" src="assets/cle.glb"></a-asset-item>
-      <a-asset-item id="cle2Asset" src="assets/cle2.glb"></a-asset-item>
-      <a-asset-item id="cle3Asset" src="assets/cle3.glb"></a-asset-item>
-      <a-asset-item id="cylindreAsset" src="assets/cylindre.obj"></a-asset-item>
-      <a-asset-item id="douanier1Asset" src="assets/douanier1.glb"></a-asset-item>
-      <a-asset-item id="douanier2Asset" src="assets/douanier2.glb"></a-asset-item>
-      <a-asset-item id="lockpickAsset" src="assets/lockpick.glb"></a-asset-item>
-      <a-asset-item id="logoTsaAsset" src="assets/logo_tsa.glb"></a-asset-item>
-      <a-asset-item id="voiture1Asset" src="assets/voiture1.glb"></a-asset-item>
-      <a-asset-item id="voiture2Asset" src="assets/voiture2.glb"></a-asset-item>
-      <a-asset-item id="voiture3Asset" src="assets/voiture3.glb"></a-asset-item>
-      <a-asset-item id="voleurAsset" src="assets/voleur.glb"></a-asset-item>
-    </a-assets>
+<div id="controls">
+  <button id="nextObject">Afficher le prochain objet</button>
+</div>
+<div id="label"></div>
 
-    <!-- Modèles avec id pour l'inspecteur -->
-    <a-entity id="Aeroport" gltf-model="#aeroportAsset" position="0 0 -10" scale="2 2 2"></a-entity>
-    <a-entity id="Avion" gltf-model="#avionAsset" position="5 1 -8" scale="1 1 1"></a-entity>
-    <a-entity id="Cle" gltf-model="#cleAsset" position="-2 0.5 -3" scale="0.5 0.5 0.5"></a-entity>
-    <a-entity id="Cle2" gltf-model="#cle2Asset" position="-1 0.5 -3" scale="0.5 0.5 0.5"></a-entity>
-    <a-entity id="Cle3" gltf-model="#cle3Asset" position="0 0.5 -3" scale="0.5 0.5 0.5"></a-entity>
-    <a-entity id="Cylindre" obj-model="obj: #cylindreAsset" position="2 0.5 -3" scale="0.5 0.5 0.5"></a-entity>
-    <a-entity id="Douanier1" gltf-model="#douanier1Asset" position="-5 0 -5" scale="1 1 1"></a-entity>
-    <a-entity id="Douanier2" gltf-model="#douanier2Asset" position="-3 0 -5" scale="1 1 1"></a-entity>
-    <a-entity id="Lockpick" gltf-model="#lockpickAsset" position="1 0.5 -3" scale="0.5 0.5 0.5"></a-entity>
-    <a-entity id="Logo_TSA" gltf-model="#logoTsaAsset" position="0 5 -10" scale="3 3 3"></a-entity>
-    <a-entity id="Voiture1" gltf-model="#voiture1Asset" position="3 0 -4" scale="1 1 1"></a-entity>
-    <a-entity id="Voiture2" gltf-model="#voiture2Asset" position="4 0 -4" scale="1 1 1"></a-entity>
-    <a-entity id="Voiture3" gltf-model="#voiture3Asset" position="5 0 -4" scale="1 1 1"></a-entity>
-    <a-entity id="Voleur" gltf-model="#voleurAsset" position="0 0 -2" scale="1 1 1"></a-entity>
+<a-scene>
 
-    <!-- Caméra et ciel -->
-    <a-entity camera position="0 1.6 5" look-controls></a-entity>
-    <a-sky color="#87CEEB"></a-sky>
+  <a-assets>
+    <a-asset-item id="aeroportAsset" src="assets/aeroport.glb"></a-asset-item>
+    <a-asset-item id="avionAsset" src="assets/avion.glb"></a-asset-item>
+    <a-asset-item id="cleAsset" src="assets/cle.glb"></a-asset-item>
+    <a-asset-item id="cle2Asset" src="assets/cle2.glb"></a-asset-item>
+    <a-asset-item id="cle3Asset" src="assets/cle3.glb"></a-asset-item>
+    <a-asset-item id="cylindreAsset" src="assets/cylindre.obj"></a-asset-item>
+    <a-asset-item id="douanier1Asset" src="assets/douanier1.glb"></a-asset-item>
+    <a-asset-item id="douanier2Asset" src="assets/douanier2.glb"></a-asset-item>
+    <a-asset-item id="lockpickAsset" src="assets/lockpick.glb"></a-asset-item>
+    <a-asset-item id="logoTsaAsset" src="assets/logo_tsa.glb"></a-asset-item>
+    <a-asset-item id="voiture1Asset" src="assets/voiture1.glb"></a-asset-item>
+    <a-asset-item id="voiture2Asset" src="assets/voiture2.glb"></a-asset-item>
+    <a-asset-item id="voiture3Asset" src="assets/voiture3.glb"></a-asset-item>
+    <a-asset-item id="voleurAsset" src="assets/voleur.glb"></a-asset-item>
+  </a-assets>
 
-  </a-scene>
+  <!-- Conteneur pour l'objet actuel -->
+  <a-entity id="currentObject"></a-entity>
+
+  <!-- Pivot de la caméra pour orbiter autour de l'objet -->
+  <a-entity id="cameraPivot" rotation="0 0 0" animation="property: rotation; to: 0 360 0; loop: true; dur: 20000; easing: linear">
+    <a-entity id="playerCamera" camera position="0 2 5" look-controls="enabled: true"></a-entity>
+  </a-entity>
+
+  <!-- Sol pour référence visuelle -->
+  <a-plane rotation="-90 0 0" width="20" height="20" color="#7BC8A4" position="0 0 0"></a-plane>
+
+  <a-sky color="#87CEEB"></a-sky>
+
+</a-scene>
+
+<script>
+  const uniformScale = "1 1 1";
+
+  const assets = [
+    {id: "aeroportAsset", name: "Aéroport"},
+    {id: "avionAsset", name: "Avion"},
+    {id: "cleAsset", name: "Clé"},
+    {id: "cle2Asset", name: "Clé2"},
+    {id: "cle3Asset", name: "Clé3"},
+    {id: "cylindreAsset", name: "Cylindre", obj:true},
+    {id: "douanier1Asset", name: "Douanier1"},
+    {id: "douanier2Asset", name: "Douanier2"},
+    {id: "lockpickAsset", name: "Lockpick"},
+    {id: "logoTsaAsset", name: "Logo TSA"},
+    {id: "voiture1Asset", name: "Voiture1"},
+    {id: "voiture2Asset", name: "Voiture2"},
+    {id: "voiture3Asset", name: "Voiture3"},
+    {id: "voleurAsset", name: "Voleur"}
+  ];
+
+  let index = 0;
+  const button = document.getElementById('nextObject');
+  const container = document.getElementById('currentObject');
+  const label = document.getElementById('label');
+
+  button.addEventListener('click', () => {
+    if(index >= assets.length) index = 0; // boucle
+
+    // Supprime l'objet précédent
+    while(container.firstChild){
+      container.removeChild(container.firstChild);
+    }
+
+    const data = assets[index];
+    const entity = document.createElement('a-entity');
+    entity.setAttribute('id', data.name.replace(/\s+/g, ''));
+
+    // Position de l'objet au centre, sur le sol
+    entity.setAttribute('position', "0 0 0");
+    entity.setAttribute('scale', "0 0 0"); // pour animation
+
+    // Animation cartoon
+    entity.setAttribute('animation__scale', {
+      property: 'scale',
+      to: uniformScale,
+      dur: 600,
+      easing: 'easeOutElastic'
+    });
+    entity.setAttribute('animation__bounce', {
+      property: 'position',
+      from: "0 2 0",
+      to: "0 0 0",
+      dur: 600,
+      easing: 'easeOutElastic'
+    });
+
+    if(data.obj){
+      entity.setAttribute('obj-model', `obj: #${data.id}`);
+    } else {
+      entity.setAttribute('gltf-model', `#${data.id}`);
+    }
+
+    container.appendChild(entity);
+
+    // Met à jour le label
+    label.textContent = data.name;
+
+    index++;
+  });
+</script>
+
 </body>
 </html>
