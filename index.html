@@ -1,182 +1,84 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <title>TSA — Viewer</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8">
+  <title>Objets TSA dynamiques</title>
   <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
   <style>
-    body { margin: 0; font-family: system-ui,Segoe UI,Roboto,Helvetica,Arial; }
-    #controls {
-      position: absolute;
-      z-index: 999;
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: 18px;
-      display:flex;
-      gap:10px;
-      align-items:center;
-    }
-    button {
-      padding: 10px 16px;
-      font-size: 15px;
-      border-radius: 8px;
-      border: none;
-      background: #1e90ff;
-      color: white;
-      cursor: pointer;
-    }
-    #label {
-      position: absolute;
-      bottom: 60px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 999;
-      padding: 6px 10px;
-      background: rgba(0,0,0,0.5);
-      color: #fff;
-      border-radius: 6px;
-      font-weight: 600;
-      pointer-events: none;
-    }
+    #controls { position: absolute; top: 20px; left: 20px; z-index: 100; }
+    button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+    #label { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+             font-size: 20px; font-weight: bold; color: #ff4081; text-shadow: 1px 1px 3px #000; }
   </style>
 </head>
 <body>
 
-  <div id="controls">
-    <button id="nextObject">Objet suivant</button>
-    <button id="prevObject">Précédent</button>
-  </div>
-  <div id="label">—</div>
+<div id="controls">
+  <button id="nextObject">Afficher le prochain objet</button>
+</div>
+<div id="label"></div>
 
-  <a-scene embedded vr-mode-ui="enabled: false">
-    <!-- container où on spawn l'objet courant -->
-    <a-entity id="currentObject"></a-entity>
+<a-scene>
+  <a-entity id="currentObject"></a-entity>
 
-    <!-- pivot caméra (la caméra est attachée au pivot pour orbiter) -->
-    <a-entity id="cameraPivot" rotation="0 0 0">
-      <a-entity id="playerCamera" camera position="0 2 5" look-controls="enabled: false"></a-entity>
-    </a-entity>
+  <!-- Pivot pour la caméra orbitale -->
+  <a-entity id="cameraPivot" rotation="0 0 0"
+            animation="property: rotation; to: 0 360 0; loop: true; dur: 20000; easing: linear">
+    <a-entity id="playerCamera" camera position="0 2 5" look-controls="enabled: true"></a-entity>
+  </a-entity>
 
-    <!-- sol et sky pour repères -->
-    <a-plane rotation="-90 0 0" width="40" height="40" color="#7BC8A4" position="0 0 0"></a-plane>
-    <a-sky color="#87CEEB"></a-sky>
-  </a-scene>
+  <a-plane rotation="-90 0 0" width="20" height="20" color="#7BC8A4" position="0 0 0"></a-plane>
+  <a-sky color="#87CEEB"></a-sky>
+</a-scene>
 
 <script>
-/*
-  Tableau complet — chaque objet a:
-    - id: nom lisible
-    - model: chemin relatif (assets/...)
-    - position: chaîne "x y z"
-    - scale: échelle appliquée au spawn initial (string)
-    - targetScale: échelle finale animée (string)
-    - rotation: objet {x,y,z} (appliqué correctement)
-  (J'ai rassemblé les valeurs que tu as fournies pour Clé, Lockpick, Clé2 ;
-   pour les autres j'ai mis des valeurs raisonnables que tu pourras affiner.)
-*/
-
 const objects = [
-  { id: "Aeroport", model: "assets/aeroport.glb", position: "0 0 0", scale: "0.02 0.02 0.02", targetScale: "0.02 0.02 0.02", rotation: {x:0,y:0,z:0} },
-  { id: "Avion", model: "assets/avion.glb", position: "0 1.27788 0", scale: "0.15 0.15 0.15", targetScale: "0.15 0.15 0.15", rotation: {x:0,y:0,z:0} },
-  { id: "Clé", model: "assets/cle.glb", position: "0 0.24814 0", scale: "60 60 60", targetScale: "0.02 0.02 0.02", rotation: {x:0,y:0,z:0} },
-  { id: "Clé2", model: "assets/cle2.glb", position: "0 0.14946 0", scale: "0.1 0.1 0.1", targetScale: "0.02 0.02 0.02", rotation: {x:15.449233987907517, y:1.137321223334684, z:-25.8621689566151} },
-  { id: "Clé3", model: "assets/cle3.glb", position: "0 0 0", scale: "0.02 0.02 0.02", targetScale: "0.02 0.02 0.02", rotation: {x:0,y:0,z:0} },
-  { id: "Cylindre", model: "assets/cylindre.obj", position: "0 0 0", scale: "0.02 0.02 0.02", targetScale: "0.02 0.02 0.02", rotation: {x:0,y:0,z:0} },
-  { id: "Douanier1", model: "assets/douanier1.glb", position: "0 0 0", scale: "0.02 0.02 0.02", targetScale: "0.02 0.02 0.02", rotation: {x:0,y:0,z:0} },
-  { id: "Douanier2", model: "assets/douanier2.glb", position: "0 0 0", scale: "0.02 0.02 0.02", targetScale: "0.02 0.02 0.02", rotation: {x:0,y:0,z:0} },
-  { id: "Lockpick", model: "assets/lockpick.glb", position: "0 0.11829 0", scale: "2 2 2", targetScale: "0.02 0.02 0.02", rotation: {x:-89.77847579243408, y:179.9998479605043, z:179.9998479605043} },
-  { id: "Logo_TSA", model: "assets/logo_tsa.glb", position: "0 0 0", scale: "0.5 0.5 0.5", targetScale: "0.5 0.5 0.5", rotation: {x:0,y:0,z:0} },
-  { id: "Voiture1", model: "assets/voiture1.glb", position: "0 0 0", scale: "0.02 0.02 0.02", targetScale: "0.02 0.02 0.02", rotation: {x:0,y:0,z:0} },
-  { id: "Voiture2", model: "assets/voiture2.glb", position: "0 0 0", scale: "0.02 0.02 0.02", targetScale: "0.02 0.02 0.02", rotation: {x:0,y:0,z:0} },
-  { id: "Voiture3", model: "assets/voiture3.glb", position: "0 0 0", scale: "0.02 0.02 0.02", targetScale: "0.02 0.02 0.02", rotation: {x:0,y:0,z:0} },
-  { id: "Voleur", model: "assets/voleur.glb", position: "0 0 0", scale: "0.02 0.02 0.02", targetScale: "0.02 0.02 0.02", rotation: {x:0,y:0,z:0} }
+  {id:"Aéroport", model:"assets/aeroport.glb", position:"0 0 0", scale:"1 1 1", rotation:"0 0 0"},
+  {id:"Avion", model:"assets/avion.glb", position:"0 1.27788 0", scale:"1 1 1", rotation:"0 0 0"},
+  {id:"Clé", model:"assets/cle.glb", position:"0 0.24814 0", scale:"0.02 0.02 0.02", rotation:"0 0 0"},
+  {id:"Clé2", model:"assets/cle2.glb", position:"0 0.14946 0", scale:"0.1 0.1 0.1", rotation:"15.449 1.137 -25.862"},
+  {id:"Clé3", model:"assets/cle3.glb", position:"0 0.14946 0", scale:"0.1 0.1 0.1", rotation:"0 0 0"},
+  {id:"Cylindre", model:"assets/cylindre.obj", position:"0 0 0", scale:"0.5 0.5 0.5", rotation:"0 0 0"},
+  {id:"Douanier1", model:"assets/douanier1.glb", position:"0 0 0", scale:"0.5 0.5 0.5", rotation:"0 0 0"},
+  {id:"Douanier2", model:"assets/douanier2.glb", position:"0 0 0", scale:"0.5 0.5 0.5", rotation:"0 0 0"},
+  {id:"Lockpick", model:"assets/lockpick.glb", position:"0 0.11829 0", scale:"2 2 2", rotation:"-89.778 180 180"},
+  {id:"Logo TSA", model:"assets/logo_tsa.glb", position:"0 0 0", scale:"1 1 1", rotation:"0 0 0"},
+  {id:"Voiture1", model:"assets/voiture1.glb", position:"0 0 0", scale:"0.5 0.5 0.5", rotation:"0 0 0"},
+  {id:"Voiture2", model:"assets/voiture2.glb", position:"0 0 0", scale:"0.5 0.5 0.5", rotation:"0 0 0"},
+  {id:"Voiture3", model:"assets/voiture3.glb", position:"0 0 0", scale:"0.5 0.5 0.5", rotation:"0 0 0"},
+  {id:"Voleur", model:"assets/voleur.glb", position:"0 0 0", scale:"0.5 0.5 0.5", rotation:"0 0 0"}
 ];
 
-// état
 let index = 0;
+const button = document.getElementById('nextObject');
 const container = document.getElementById('currentObject');
 const label = document.getElementById('label');
-const nextBtn = document.getElementById('nextObject');
-const prevBtn = document.getElementById('prevObject');
 
-// spawn (affiche 1 seul objet — remplace l'ancien)
-function spawnAtIndex(i) {
-  if (i < 0 || i >= objects.length) return;
-  const data = objects[i];
+button.addEventListener('click', () => {
+  if(index >= objects.length) index = 0;
 
-  // clear
-  while (container.firstChild) container.removeChild(container.firstChild);
+  while(container.firstChild) container.removeChild(container.firstChild);
 
-  // create entity
+  const data = objects[index];
   const entity = document.createElement('a-entity');
   entity.setAttribute('id', data.id);
   entity.setAttribute('position', data.position);
   entity.setAttribute('scale', data.scale);
+  entity.setAttribute('rotation', data.rotation);
 
-  // rotation: appliquer format correct
-  if (data.rotation && typeof data.rotation === 'object') {
-    entity.setAttribute('rotation', `${data.rotation.x} ${data.rotation.y} ${data.rotation.z}`);
-  } else if (data.rotation) {
-    // fallback : string
-    entity.setAttribute('rotation', data.rotation);
-  }
-
-  // model loader
-  if (data.model.toLowerCase().endsWith('.obj')) {
-    // obj via url
+  if(data.model.endsWith(".obj")){
     entity.setAttribute('obj-model', `obj: url(${data.model})`);
   } else {
-    // gltf direct path
     entity.setAttribute('gltf-model', data.model);
   }
 
-  // animations (scale -> targetScale ; bounce -> to position)
-  if (data.targetScale) {
-    entity.setAttribute('animation__scale', `dur: 600; easing: easeOutElastic; property: scale; to: ${data.targetScale}`);
-  } else {
-    // fallback animate to same scale
-    entity.setAttribute('animation__scale', `dur: 600; easing: easeOutElastic; property: scale; to: ${data.scale}`);
-  }
+  entity.setAttribute('animation__scale', `dur: 600; easing: easeOutElastic; property: scale; to: ${data.scale}`);
   entity.setAttribute('animation__bounce', `dur: 600; easing: easeOutElastic; from: 0 2 0; property: position; to: ${data.position}`);
 
-  // append
   container.appendChild(entity);
-
-  // label
   label.textContent = data.id;
-}
-
-// bouton suivant / précédent
-nextBtn.addEventListener('click', () => {
-  index = (index + 1) % objects.length;
-  spawnAtIndex(index);
+  index++;
 });
-prevBtn.addEventListener('click', () => {
-  index = (index - 1 + objects.length) % objects.length;
-  spawnAtIndex(index);
-});
-
-// initial spawn
-spawnAtIndex(index);
-
-// caméra orbitale (animation requestAnimationFrame) — tu avais demandé rotation continue
-(function rotateCamera(){
-  const pivot = document.getElementById('cameraPivot');
-  let angle = 0;
-  function tick(){
-    angle += 0.3; // vitesse
-    const rad = angle * Math.PI/180;
-    const r = 5; // rayon
-    const x = Math.sin(rad) * r;
-    const z = Math.cos(rad) * r;
-    // camera pivot position and rotate to look at center
-    pivot.setAttribute('position', `${x} 2 ${z}`);
-    pivot.setAttribute('rotation', `0 ${-angle} 0`);
-    requestAnimationFrame(tick);
-  }
-  tick();
-})();
 </script>
 
 </body>
