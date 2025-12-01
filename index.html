@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Objets à taille correcte</title>
+  <title>Objets avec scale par objet</title>
   <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
   <style>
     #controls { position: absolute; top: 20px; left: 20px; z-index: 100; }
@@ -53,23 +53,21 @@
 
 <script>
 const assets = [
-  {id: "aeroportAsset", name: "Aéroport"},
-  {id: "avionAsset", name: "Avion"},
-  {id: "cleAsset", name: "Clé"},
-  {id: "cle2Asset", name: "Clé2"},
-  {id: "cle3Asset", name: "Clé3"},
-  {id: "cylindreAsset", name: "Cylindre", obj:true},
-  {id: "douanier1Asset", name: "Douanier1"},
-  {id: "douanier2Asset", name: "Douanier2"},
-  {id: "lockpickAsset", name: "Lockpick"},
-  {id: "logoTsaAsset", name: "Logo TSA"},
-  {id: "voiture1Asset", name: "Voiture1"},
-  {id: "voiture2Asset", name: "Voiture2"},
-  {id: "voiture3Asset", name: "Voiture3"},
-  {id: "voleurAsset", name: "Voleur"}
+  {id: "aeroportAsset", name: "Aéroport", scale: "1 1 1"},
+  {id: "avionAsset", name: "Avion", scale: "1 1 1"},
+  {id: "cleAsset", name: "Clé", scale: "1 1 1"},
+  {id: "cle2Asset", name: "Clé2", scale: "1 1 1"},
+  {id: "cle3Asset", name: "Clé3", scale: "1 1 1"},
+  {id: "cylindreAsset", name: "Cylindre", obj:true, scale: "1 1 1"},
+  {id: "douanier1Asset", name: "Douanier1", scale: "1 1 1"},
+  {id: "douanier2Asset", name: "Douanier2", scale: "1 1 1"},
+  {id: "lockpickAsset", name: "Lockpick", scale: "1 1 1"},
+  {id: "logoTsaAsset", name: "Logo TSA", scale: "1 1 1"},
+  {id: "voiture1Asset", name: "Voiture1", scale: "1 1 1"},
+  {id: "voiture2Asset", name: "Voiture2", scale: "1 1 1"},
+  {id: "voiture3Asset", name: "Voiture3", scale: "1 1 1"},
+  {id: "voleurAsset", name: "Voleur", scale: "1 1 1"}
 ];
-
-const fixedScale = "0.7 0.7 0.7"; // Taille correcte pour tous les objets
 
 let index = 0;
 const button = document.getElementById('nextObject');
@@ -79,6 +77,7 @@ const label = document.getElementById('label');
 button.addEventListener('click', () => {
   if(index >= assets.length) index = 0;
 
+  // Supprime l'objet précédent
   while(container.firstChild) container.removeChild(container.firstChild);
 
   const data = assets[index];
@@ -86,8 +85,8 @@ button.addEventListener('click', () => {
   entity.setAttribute('id', data.name.replace(/\s+/g, ''));
   entity.setAttribute('position', "0 0 0");
 
-  // **Appliquer la scale fixe**
-  entity.setAttribute('scale', fixedScale);
+  // Appliquer la scale définie dans l'objet
+  entity.setAttribute('scale', data.scale);
 
   if(data.obj){
     entity.setAttribute('obj-model', `obj: #${data.id}`);
@@ -96,7 +95,7 @@ button.addEventListener('click', () => {
   }
 
   // Animation cartoon
-  entity.setAttribute('animation__scale', { property: 'scale', to: fixedScale, dur: 600, easing: 'easeOutElastic' });
+  entity.setAttribute('animation__scale', { property: 'scale', to: data.scale, dur: 600, easing: 'easeOutElastic' });
   entity.setAttribute('animation__bounce', { property: 'position', from: "0 2 0", to: "0 0 0", dur: 600, easing: 'easeOutElastic' });
 
   container.appendChild(entity);
