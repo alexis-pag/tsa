@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Objets avec taille standardisée</title>
+  <title>Objets à taille correcte</title>
   <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
   <style>
     #controls { position: absolute; top: 20px; left: 20px; z-index: 100; }
@@ -69,7 +69,7 @@ const assets = [
   {id: "voleurAsset", name: "Voleur"}
 ];
 
-const targetHeight = 2; // Hauteur visible standard devant la caméra
+const fixedScale = "0.7 0.7 0.7"; // Taille correcte pour tous les objets
 
 let index = 0;
 const button = document.getElementById('nextObject');
@@ -85,7 +85,9 @@ button.addEventListener('click', () => {
   const entity = document.createElement('a-entity');
   entity.setAttribute('id', data.name.replace(/\s+/g, ''));
   entity.setAttribute('position', "0 0 0");
-  entity.setAttribute('scale', "0 0 0");
+
+  // **Appliquer la scale fixe**
+  entity.setAttribute('scale', fixedScale);
 
   if(data.obj){
     entity.setAttribute('obj-model', `obj: #${data.id}`);
@@ -94,21 +96,10 @@ button.addEventListener('click', () => {
   }
 
   // Animation cartoon
-  entity.setAttribute('animation__scale', { property: 'scale', to: "1 1 1", dur: 600, easing: 'easeOutElastic' });
+  entity.setAttribute('animation__scale', { property: 'scale', to: fixedScale, dur: 600, easing: 'easeOutElastic' });
   entity.setAttribute('animation__bounce', { property: 'position', from: "0 2 0", to: "0 0 0", dur: 600, easing: 'easeOutElastic' });
 
   container.appendChild(entity);
-
-  // Ajustement de la taille après chargement
-  entity.addEventListener('model-loaded', () => {
-    const mesh = entity.getObject3D('mesh');
-    if(!mesh) return;
-    const box = new THREE.Box3().setFromObject(mesh);
-    const size = new THREE.Vector3();
-    box.getSize(size);
-    const scaleFactor = targetHeight / size.y; // normalise la hauteur à targetHeight
-    entity.setAttribute('scale', `${scaleFactor} ${scaleFactor} ${scaleFactor}`);
-  });
 
   label.textContent = data.name;
   index++;
