@@ -22,7 +22,7 @@
 
   <a-assets>
     <a-asset-item id="aeroportAsset" src="assets/aeroport.glb"></a-asset-item>
-    <a-entity id="Avion" position="0 1.27788 0" scale="0.15 0.15 0.15" gltf-model="#avionAsset" animation__scale="dur: 600; easing: easeOutElastic; property: scale; to: 1 1 1" animation__bounce="dur: 600; easing: easeOutElastic; from: 0 2 0; property: position; to: 0 0 0"></a-entity>
+    <a-asset-item id="avionAsset" src="assets/avion.glb"></a-asset-item>
     <a-asset-item id="cleAsset" src="assets/cle.glb"></a-asset-item>
     <a-asset-item id="cle2Asset" src="assets/cle2.glb"></a-asset-item>
     <a-asset-item id="cle3Asset" src="assets/cle3.glb"></a-asset-item>
@@ -54,7 +54,7 @@
 <script>
 const assets = [
   {id: "aeroportAsset", name: "Aéroport", scale: "0.1 0.1 0.1"},
-  {id: "avionAsset", name: "Avion", scale: "1 1 1"},
+  {id: "avionAsset", name: "Avion", scale: "0.15 0.15 0.15", position: "0 1.27788 0"},
   {id: "cleAsset", name: "Clé", scale: "1 1 1"},
   {id: "cle2Asset", name: "Clé2", scale: "1 1 1"},
   {id: "cle3Asset", name: "Clé3", scale: "1 1 1"},
