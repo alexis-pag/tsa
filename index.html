@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Scène TSA</title>
+  <title>Scène TSA avec noms</title>
   <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
 </head>
 <body>
@@ -26,21 +26,48 @@
       <a-asset-item id="voleur" src="assets/voleur.glb"></a-asset-item>
     </a-assets>
 
-    <!-- Positionnement des objets dans la scène -->
+    <!-- Modèles et leurs noms -->
     <a-entity gltf-model="#aeroport" position="0 0 -10" scale="2 2 2"></a-entity>
+    <a-text value="Aéroport" position="0 3 -10" align="center" color="#000"></a-text>
+
     <a-entity gltf-model="#avion" position="5 1 -8" scale="1 1 1"></a-entity>
+    <a-text value="Avion" position="5 3 -8" align="center" color="#000"></a-text>
+
     <a-entity gltf-model="#cle" position="-2 0.5 -3" scale="0.5 0.5 0.5"></a-entity>
+    <a-text value="Clé" position="-2 2 -3" align="center" color="#000"></a-text>
+
     <a-entity gltf-model="#cle2" position="-1 0.5 -3" scale="0.5 0.5 0.5"></a-entity>
+    <a-text value="Clé2" position="-1 2 -3" align="center" color="#000"></a-text>
+
     <a-entity gltf-model="#cle3" position="0 0.5 -3" scale="0.5 0.5 0.5"></a-entity>
+    <a-text value="Clé3" position="0 2 -3" align="center" color="#000"></a-text>
+
     <a-entity obj-model="obj: #cylindre" position="2 0.5 -3" scale="0.5 0.5 0.5"></a-entity>
+    <a-text value="Cylindre" position="2 2 -3" align="center" color="#000"></a-text>
+
     <a-entity gltf-model="#douanier1" position="-5 0 -5" scale="1 1 1"></a-entity>
+    <a-text value="Douanier1" position="-5 2 -5" align="center" color="#000"></a-text>
+
     <a-entity gltf-model="#douanier2" position="-3 0 -5" scale="1 1 1"></a-entity>
+    <a-text value="Douanier2" position="-3 2 -5" align="center" color="#000"></a-text>
+
     <a-entity gltf-model="#lockpick" position="1 0.5 -3" scale="0.5 0.5 0.5"></a-entity>
+    <a-text value="Lockpick" position="1 2 -3" align="center" color="#000"></a-text>
+
     <a-entity gltf-model="#logo_tsa" position="0 5 -10" scale="3 3 3"></a-entity>
+    <a-text value="Logo TSA" position="0 8 -10" align="center" color="#000"></a-text>
+
     <a-entity gltf-model="#voiture1" position="3 0 -4" scale="1 1 1"></a-entity>
+    <a-text value="Voiture1" position="3 2 -4" align="center" color="#000"></a-text>
+
     <a-entity gltf-model="#voiture2" position="4 0 -4" scale="1 1 1"></a-entity>
+    <a-text value="Voiture2" position="4 2 -4" align="center" color="#000"></a-text>
+
     <a-entity gltf-model="#voiture3" position="5 0 -4" scale="1 1 1"></a-entity>
+    <a-text value="Voiture3" position="5 2 -4" align="center" color="#000"></a-text>
+
     <a-entity gltf-model="#voleur" position="0 0 -2" scale="1 1 1"></a-entity>
+    <a-text value="Voleur" position="0 2 -2" align="center" color="#000"></a-text>
 
     <!-- Caméra et ciel -->
     <a-entity camera position="0 1.6 5" look-controls></a-entity>
@@ -49,4 +76,3 @@
   </a-scene>
 </body>
 </html>
-
