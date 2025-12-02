@@ -26,7 +26,6 @@
             animation="property: rotation; to: 0 360 0; loop: true; dur: 20000; easing: linear">
     <a-entity id="playerCamera" camera position="0 2 5" look-controls="enabled: true"></a-entity>
   </a-entity>
-
 </a-scene>
 
 <script>
@@ -55,16 +54,20 @@ function showObject(idx) {
   if(idx >= objects.length) idx = 0;
   index = idx;
 
+  // Supprime l'ancien objet
   while(container.firstChild) container.removeChild(container.firstChild);
 
   const data = objects[index];
   const entity = document.createElement('a-entity');
   entity.setAttribute('id', data.id);
-  entity.setAttribute('position', `0 5 0`); // start above ground
+
+  // Commence en haut pour descendre
+  const startY = 10;
+  entity.setAttribute('position', `0 ${startY} 0`);
   entity.setAttribute('scale', data.scale);
   entity.setAttribute('rotation', data.rotation);
 
-  if(data.model.endsWith(".obj")){
+  if(data.model.endsWith(".obj")) {
     entity.setAttribute('obj-model', `obj: url(${data.model})`);
   } else {
     entity.setAttribute('gltf-model', data.model);
@@ -73,51 +76,66 @@ function showObject(idx) {
   container.appendChild(entity);
   label.textContent = data.id;
 
-  // Rebonds multiples type cartoon
   const finalY = parseFloat(data.position.split(" ")[1]);
-  let bounceHeight = 5;
-  let duration = 400;
-  let dampening = 0.5;
-  let delay = 0;
 
-  function bounce() {
-    if(bounceHeight < 0.05) {
-      entity.setAttribute('position', data.position);
-      entity.setAttribute('scale', data.scale);
-      return;
+  // Animation descente initiale
+  entity.setAttribute('animation__drop', `
+    property: position;
+    from: 0 ${startY} 0;
+    to: 0 ${finalY + 2} 0;
+    dur: 800;
+    easing: easeInQuad;
+    startEvents: dropStart;
+  `);
+  entity.emit('dropStart');
+
+  // Après descente, lancer rebonds cartoon
+  setTimeout(() => {
+    let bounceHeight = 2;
+    let duration = 400;
+    let dampening = 0.5;
+    let delay = 0;
+
+    function bounce() {
+      if(bounceHeight < 0.05) {
+        entity.setAttribute('position', data.position);
+        entity.setAttribute('scale', data.scale);
+        return;
+      }
+
+      const scaleVals = data.scale.split(' ').map(parseFloat);
+
+      // Position rebond
+      entity.setAttribute(`animation__bounce${delay}`, `
+        property: position;
+        from: 0 ${finalY + bounceHeight} 0;
+        to: 0 ${finalY} 0;
+        dur: ${duration};
+        easing: easeOutQuad;
+        startEvents: startBounce${delay};
+      `);
+
+      // Squash/stretch
+      entity.setAttribute(`animation__squash${delay}`, `
+        property: scale;
+        from: ${scaleVals[0]*1.2} ${scaleVals[1]*0.7} ${scaleVals[2]*1.2};
+        to: ${data.scale};
+        dur: ${duration};
+        easing: easeOutQuad;
+        startEvents: startBounce${delay};
+      `);
+
+      setTimeout(() => {
+        bounceHeight *= dampening;
+        duration *= 0.7;
+        delay += 1;
+        entity.emit(`startBounce${delay}`);
+        bounce();
+      }, duration);
     }
 
-    // Animation position (rebond)
-    entity.setAttribute(`animation__bounce${delay}`, `
-      property: position;
-      from: 0 ${finalY + bounceHeight} 0;
-      to: 0 ${finalY} 0;
-      dur: ${duration};
-      easing: easeOutQuad;
-      startEvents: startBounce${delay};
-    `);
-
-    // Animation scale (squash & stretch)
-    const scaleVals = data.scale.split(' ').map(parseFloat);
-    entity.setAttribute(`animation__squash${delay}`, `
-      property: scale;
-      from: ${scaleVals[0]*1.2} ${scaleVals[1]*0.7} ${scaleVals[2]*1.2};
-      to: ${data.scale};
-      dur: ${duration};
-      easing: easeOutQuad;
-      startEvents: startBounce${delay};
-    `);
-
-    setTimeout(() => {
-      bounceHeight *= dampening;
-      duration *= 0.7;
-      delay += 1;
-      entity.emit(`startBounce${delay}`);
-      bounce();
-    }, duration);
-  }
-
-  bounce();
+    bounce();
+  }, 800);
 }
 
 // Bouton suivant
