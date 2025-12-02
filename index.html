@@ -75,16 +75,19 @@ function showObject(idx) {
 
   // Rebonds multiples type cartoon
   const finalY = parseFloat(data.position.split(" ")[1]);
-  let bounceHeight = 5; // hauteur initiale
+  let bounceHeight = 5;
   let duration = 400;
   let dampening = 0.5;
   let delay = 0;
 
   function bounce() {
-    if(bounceHeight < 0.1) {
-      entity.setAttribute('position', data.position); // position finale stable
+    if(bounceHeight < 0.05) {
+      entity.setAttribute('position', data.position);
+      entity.setAttribute('scale', data.scale);
       return;
     }
+
+    // Animation position (rebond)
     entity.setAttribute(`animation__bounce${delay}`, `
       property: position;
       from: 0 ${finalY + bounceHeight} 0;
@@ -93,6 +96,18 @@ function showObject(idx) {
       easing: easeOutQuad;
       startEvents: startBounce${delay};
     `);
+
+    // Animation scale (squash & stretch)
+    const scaleVals = data.scale.split(' ').map(parseFloat);
+    entity.setAttribute(`animation__squash${delay}`, `
+      property: scale;
+      from: ${scaleVals[0]*1.2} ${scaleVals[1]*0.7} ${scaleVals[2]*1.2};
+      to: ${data.scale};
+      dur: ${duration};
+      easing: easeOutQuad;
+      startEvents: startBounce${delay};
+    `);
+
     setTimeout(() => {
       bounceHeight *= dampening;
       duration *= 0.7;
@@ -101,6 +116,7 @@ function showObject(idx) {
       bounce();
     }, duration);
   }
+
   bounce();
 }
 
