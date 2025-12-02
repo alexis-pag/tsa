@@ -21,20 +21,11 @@
 <a-scene>
   <a-entity id="currentObject"></a-entity>
 
-    <a-entity
-      id="Cylindre"
-      position="0 0 0"
-      rotation="90 0 0"
-      scale="1 1 1"
-      obj-model="obj: assets/cylindre.obj">
-  </a-entity>
-
   <!-- Pivot pour la caméra orbitale -->
   <a-entity id="cameraPivot" rotation="0 0 0"
             animation="property: rotation; to: 0 360 0; loop: true; dur: 20000; easing: linear">
     <a-entity id="playerCamera" camera position="0 2 5" look-controls="enabled: true"></a-entity>
   </a-entity>
-
 
 </a-scene>
 
@@ -44,15 +35,15 @@ const objects = [
   {id:"Avion", model:"assets/avion.glb", position:"0 1.27788 0", scale:"0.15 0.15 0.15", rotation:"0 0 0"},
   {id:"Clé", model:"assets/cle.glb", position:"0 0.24814 0", scale:"60 60 60", rotation:"0 0 0"},
   {id:"Clé2", model:"assets/cle2.glb", position:"0 0.14946 0", scale:"0.1 0.1 0.1", rotation:"15.449 1.137 -25.862"},
-  {id: "Clé3", model: "assets/cle3.glb", position: "0 0.14946 0", scale: "7 7 7", rotation: "88.85830557345398 0 0"},
-  {id: "Douanier1", model: "assets/douanier1.glb", position: "0 1.8271 -0.16207", scale: "3 3 2", rotation: "90 0 0"},
+  {id:"Clé3", model:"assets/cle3.glb", position:"0 0.14946 0", scale:"7 7 7", rotation:"88.85830557345398 0 0"},
+  {id:"Douanier1", model:"assets/douanier1.glb", position:"0 1.8271 -0.16207", scale:"3 3 2", rotation:"90 0 0"},
   {id:"Douanier2", model:"assets/douanier2.glb", position:"0 0 0", scale:"0.5 0.5 0.5", rotation:"0 0 0"},
   {id:"Lockpick", model:"assets/lockpick.glb", position:"0 0.11829 0", scale:"2 2 2", rotation:"-89.778 180 180"},
-  {id: "Logo TSA", model: "assets/logo_tsa.glb", position: "0 0 0", scale: "200 10 200", rotation: "0 0 0"},
-  {id: "Voiture1", model: "assets/voiture1.glb", position: "0 2.30092 0", scale: "3 3 3", rotation: "0 0 0"},
-  {id: "Voiture2", model: "assets/voiture2.glb", position: "0 1.52769 0", scale: "0.5 0.5 0.5", rotation: "0 0 0"},
-  {id: "Voiture3", model: "assets/voiture3.glb", position: "0 0.70577 0", scale: "0.01 0.01 0.01", rotation: "0 0 0"},
-  {id: "Voleur", model: "assets/voleur.glb", position: "0 1.76452 0", scale: "1 1 1", rotation: "0 0 0"},
+  {id:"Logo TSA", model:"assets/logo_tsa.glb", position:"0 0 0", scale:"200 10 200", rotation:"0 0 0"},
+  {id:"Voiture1", model:"assets/voiture1.glb", position:"0 2.30092 0", scale:"3 3 3", rotation:"0 0 0"},
+  {id:"Voiture2", model:"assets/voiture2.glb", position:"0 1.52769 0", scale:"0.5 0.5 0.5", rotation:"0 0 0"},
+  {id:"Voiture3", model:"assets/voiture3.glb", position:"0 0.70577 0", scale:"0.01 0.01 0.01", rotation:"0 0 0"},
+  {id:"Voleur", model:"assets/voleur.glb", position:"0 1.76452 0", scale:"1 1 1", rotation:"0 0 0"},
 ];
 
 let index = 0;
@@ -60,18 +51,16 @@ const container = document.getElementById('currentObject');
 const label = document.getElementById('label');
 
 function showObject(idx) {
-  // Assure que l'index est dans les bornes
   if(idx < 0) idx = objects.length - 1;
   if(idx >= objects.length) idx = 0;
   index = idx;
 
-  // Supprime l'ancien objet
   while(container.firstChild) container.removeChild(container.firstChild);
 
   const data = objects[index];
   const entity = document.createElement('a-entity');
   entity.setAttribute('id', data.id);
-  entity.setAttribute('position', data.position);
+  entity.setAttribute('position', `0 5 0`); // start above ground
   entity.setAttribute('scale', data.scale);
   entity.setAttribute('rotation', data.rotation);
 
@@ -81,11 +70,38 @@ function showObject(idx) {
     entity.setAttribute('gltf-model', data.model);
   }
 
-  entity.setAttribute('animation__scale', `dur: 600; easing: easeOutElastic; property: scale; to: ${data.scale}`);
-  entity.setAttribute('animation__bounce', `dur: 600; easing: easeOutElastic; from: 0 2 0; property: position; to: ${data.position}`);
-
   container.appendChild(entity);
   label.textContent = data.id;
+
+  // Rebonds multiples type cartoon
+  const finalY = parseFloat(data.position.split(" ")[1]);
+  let bounceHeight = 5; // hauteur initiale
+  let duration = 400;
+  let dampening = 0.5;
+  let delay = 0;
+
+  function bounce() {
+    if(bounceHeight < 0.1) {
+      entity.setAttribute('position', data.position); // position finale stable
+      return;
+    }
+    entity.setAttribute(`animation__bounce${delay}`, `
+      property: position;
+      from: 0 ${finalY + bounceHeight} 0;
+      to: 0 ${finalY} 0;
+      dur: ${duration};
+      easing: easeOutQuad;
+      startEvents: startBounce${delay};
+    `);
+    setTimeout(() => {
+      bounceHeight *= dampening;
+      duration *= 0.7;
+      delay += 1;
+      entity.emit(`startBounce${delay}`);
+      bounce();
+    }, duration);
+  }
+  bounce();
 }
 
 // Bouton suivant
