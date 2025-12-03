@@ -82,26 +82,26 @@ function showObject(idx) {
   label.textContent = data.id;
 
   const finalY = parseFloat(data.position.split(" ")[1]);
+  const scaleVals = data.scale.split(' ').map(parseFloat);
 
   // Chute lente
-  entity.setAttribute('animation__fall', `
-    property: position;
-    from: 0 ${startY} 0;
-    to: 0 ${finalY + 2} 0;
-    dur: 1500;
-    easing: easeInQuad;
-    startEvents: dropStart;
-  `);
+  entity.setAttribute('animation__fall', {
+    property: 'position',
+    to: `0 ${finalY} 0`,
+    dur: 1500,
+    easing: 'easeInQuad',
+    startEvents: 'dropStart'
+  });
 
-  // Squash/stretch pour effet cartoon
-  entity.setAttribute('animation__stretch', `
-    property: scale;
-    from: ${data.scale};
-    to: ${data.scale.split(' ').map((v,i) => i===1 ? v*0.7 : v*1.2).join(' ')};
-    dur: 1500;
-    easing: easeInOutQuad;
-    startEvents: dropStart;
-  `);
+  // Squash/stretch cartoon
+  entity.setAttribute('animation__stretch', {
+    property: 'scale',
+    from: data.scale,
+    to: `${scaleVals[0]*1.2} ${scaleVals[1]*0.7} ${scaleVals[2]*1.2}`,
+    dur: 1500,
+    easing: 'easeInOutQuad',
+    startEvents: 'dropStart'
+  });
 
   entity.emit('dropStart');
 
@@ -119,24 +119,23 @@ function showObject(idx) {
         return;
       }
 
-      const scaleVals = data.scale.split(' ').map(parseFloat);
-      entity.setAttribute(`animation__bounce${delay}`, `
-        property: position;
-        from: 0 ${finalY + bounceHeight} 0;
-        to: 0 ${finalY} 0;
-        dur: ${duration};
-        easing: easeOutQuad;
-        startEvents: startBounce${delay};
-      `);
+      entity.setAttribute(`animation__bounce${delay}`, {
+        property: 'position',
+        from: `0 ${finalY + bounceHeight} 0`,
+        to: `0 ${finalY} 0`,
+        dur: duration,
+        easing: 'easeOutQuad',
+        startEvents: `startBounce${delay}`
+      });
 
-      entity.setAttribute(`animation__squash${delay}`, `
-        property: scale;
-        from: ${scaleVals[0]*1.2} ${scaleVals[1]*0.7} ${scaleVals[2]*1.2};
-        to: ${data.scale};
-        dur: ${duration};
-        easing: easeOutQuad;
-        startEvents: startBounce${delay};
-      `);
+      entity.setAttribute(`animation__squash${delay}`, {
+        property: 'scale',
+        from: `${scaleVals[0]*1.2} ${scaleVals[1]*0.7} ${scaleVals[2]*1.2}`,
+        to: data.scale,
+        dur: duration,
+        easing: 'easeOutQuad',
+        startEvents: `startBounce${delay}`
+      });
 
       setTimeout(() => {
         bounceHeight *= dampening;
