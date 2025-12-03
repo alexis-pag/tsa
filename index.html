@@ -21,29 +21,35 @@
 <a-scene>
   <a-entity id="currentObject"></a-entity>
 
-  <!-- Pivot pour la caméra orbitale -->
   <a-entity id="cameraPivot" rotation="0 0 0"
             animation="property: rotation; to: 0 360 0; loop: true; dur: 20000; easing: linear">
     <a-entity id="playerCamera" camera position="0 2 5" look-controls="enabled: true"></a-entity>
   </a-entity>
-  <a-entity obj-model="obj: assets/cylindre.obj" scale="1 1 1" rotation="90 0 0" material="color: #383838"></a-entity>
+
+  <!-- Cylindre de 1 m² -->
+  <a-entity 
+    obj-model="obj: assets/cylindre.obj" 
+    scale="1.128 0.3 1.128"
+    rotation="90 0 0" 
+    material="color: #383838">
+  </a-entity>
 </a-scene>
 
 <script>
 const objects = [
-  {id:"Aéroport", model:"assets/aeroport.glb", position:"0 0 0", scale:"0.1 0.1 0.1", rotation:"0 0 0"},
-  {id:"Avion", model:"assets/avion.glb", position:"0 1.27788 0", scale:"0.15 0.15 0.15", rotation:"0 0 0"},
-  {id:"Clé", model:"assets/cle.glb", position:"0 0.24814 0", scale:"60 60 60", rotation:"0 0 0"},
-  {id:"Clé2", model:"assets/cle2.glb", position:"0 0.14946 0", scale:"0.1 0.1 0.1", rotation:"15.449 1.137 -25.862"},
-  {id:"Clé3", model:"assets/cle3.glb", position:"0 0.14946 0", scale:"7 7 7", rotation:"88.85830557345398 0 0"},
-  {id:"Douanier1", model:"assets/douanier1.glb", position:"0 1.8271 -0.16207", scale:"3 3 2", rotation:"90 0 0"},
-  {id:"Douanier2", model:"assets/douanier2.glb", position:"0 0 0", scale:"0.5 0.5 0.5", rotation:"0 0 0"},
-  {id:"Lockpick", model:"assets/lockpick.glb", position:"0 0.11829 0", scale:"2 2 2", rotation:"-89.778 180 180"},
-  {id:"Logo TSA", model:"assets/logo_tsa.glb", position:"0 0 0", scale:"200 10 200", rotation:"0 0 0"},
-  {id:"Voiture1", model:"assets/voiture1.glb", position:"0 0.791 0", scale:"1 1 1", rotation:"0 0 0"},
-  {id:"Voiture2", model:"assets/voiture2.glb", position:"0 1.52769 0", scale:"0.5 0.5 0.5", rotation:"0 0 0"},
-  {id:"Voiture3", model:"assets/voiture3.glb", position:"0 0.70577 0", scale:"0.01 0.01 0.01", rotation:"0 0 0"},
-  {id:"Voleur", model:"assets/voleur.glb", position:"0 1.76452 0", scale:"1 1 1", rotation:"0 0 0"},
+  {id:"Aéroport", model:"assets/aeroport.glb", position:"0 0.7 0", scale:"0.1 0.1 0.1", rotation:"0 0 0"},
+  {id:"Avion", model:"assets/avion.glb", position:"0 0.7 0", scale:"0.15 0.15 0.15", rotation:"0 0 0"},
+  {id:"Clé", model:"assets/cle.glb", position:"0 0.7 0", scale:"60 60 60", rotation:"0 0 0"},
+  {id:"Clé2", model:"assets/cle2.glb", position:"0 0.7 0", scale:"0.1 0.1 0.1", rotation:"15.449 1.137 -25.862"},
+  {id:"Clé3", model:"assets/cle3.glb", position:"0 0.7 0", scale:"7 7 7", rotation:"88.85830557345398 0 0"},
+  {id:"Douanier1", model:"assets/douanier1.glb", position:"0 0.7 -0.16207", scale:"3 3 2", rotation:"90 0 0"},
+  {id:"Douanier2", model:"assets/douanier2.glb", position:"0 0.7 0", scale:"0.5 0.5 0.5", rotation:"0 0 0"},
+  {id:"Lockpick", model:"assets/lockpick.glb", position:"0 0.7 0", scale:"2 2 2", rotation:"-89.778 180 180"},
+  {id:"Logo TSA", model:"assets/logo_tsa.glb", position:"0 0.7 0", scale:"200 10 200", rotation:"0 0 0"},
+  {id:"Voiture1", model:"assets/voiture1.glb", position:"0 0.7 0", scale:"1 1 1", rotation:"0 0 0"},
+  {id:"Voiture2", model:"assets/voiture2.glb", position:"0 0.7 0", scale:"0.5 0.5 0.5", rotation:"0 0 0"},
+  {id:"Voiture3", model:"assets/voiture3.glb", position:"0 0.7 0", scale:"0.01 0.01 0.01", rotation:"0 0 0"},
+  {id:"Voleur", model:"assets/voleur.glb", position:"0 0.7 0", scale:"1 1 1", rotation:"0 0 0"}
 ];
 
 let index = 0;
@@ -55,14 +61,12 @@ function showObject(idx) {
   if(idx >= objects.length) idx = 0;
   index = idx;
 
-  // Supprime l'ancien objet
   while(container.firstChild) container.removeChild(container.firstChild);
 
   const data = objects[index];
   const entity = document.createElement('a-entity');
   entity.setAttribute('id', data.id);
 
-  // Commence en haut pour descendre
   const startY = 10;
   entity.setAttribute('position', `0 ${startY} 0`);
   entity.setAttribute('scale', data.scale);
@@ -79,7 +83,6 @@ function showObject(idx) {
 
   const finalY = parseFloat(data.position.split(" ")[1]);
 
-  // Animation descente initiale
   entity.setAttribute('animation__drop', `
     property: position;
     from: 0 ${startY} 0;
@@ -90,7 +93,6 @@ function showObject(idx) {
   `);
   entity.emit('dropStart');
 
-  // Après descente, lancer rebonds cartoon
   setTimeout(() => {
     let bounceHeight = 2;
     let duration = 400;
@@ -106,7 +108,6 @@ function showObject(idx) {
 
       const scaleVals = data.scale.split(' ').map(parseFloat);
 
-      // Position rebond
       entity.setAttribute(`animation__bounce${delay}`, `
         property: position;
         from: 0 ${finalY + bounceHeight} 0;
@@ -116,7 +117,6 @@ function showObject(idx) {
         startEvents: startBounce${delay};
       `);
 
-      // Squash/stretch
       entity.setAttribute(`animation__squash${delay}`, `
         property: scale;
         from: ${scaleVals[0]*1.2} ${scaleVals[1]*0.7} ${scaleVals[2]*1.2};
@@ -139,21 +139,15 @@ function showObject(idx) {
   }, 800);
 }
 
-// Bouton suivant
 document.getElementById('nextObject').addEventListener('click', () => {
   showObject(index + 1);
 });
 
-// Flèches gauche/droite
 document.addEventListener('keydown', (e) => {
-  if(e.key === "ArrowRight"){
-    showObject(index + 1);
-  } else if(e.key === "ArrowLeft"){
-    showObject(index - 1);
-  }
+  if(e.key === "ArrowRight") showObject(index + 1);
+  else if(e.key === "ArrowLeft") showObject(index - 1);
 });
 
-// Affiche le premier objet au démarrage
 showObject(index);
 </script>
 
