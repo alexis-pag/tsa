@@ -83,19 +83,32 @@ function showObject(idx) {
 
   const finalY = parseFloat(data.position.split(" ")[1]);
 
-  entity.setAttribute('animation__drop', `
+  // Chute lente
+  entity.setAttribute('animation__fall', `
     property: position;
     from: 0 ${startY} 0;
     to: 0 ${finalY + 2} 0;
-    dur: 800;
+    dur: 1500;
     easing: easeInQuad;
     startEvents: dropStart;
   `);
+
+  // Squash/stretch pour effet cartoon
+  entity.setAttribute('animation__stretch', `
+    property: scale;
+    from: ${data.scale};
+    to: ${data.scale.split(' ').map((v,i) => i===1 ? v*0.7 : v*1.2).join(' ')};
+    dur: 1500;
+    easing: easeInOutQuad;
+    startEvents: dropStart;
+  `);
+
   entity.emit('dropStart');
 
+  // Rebond cartoon
   setTimeout(() => {
     let bounceHeight = 2;
-    let duration = 400;
+    let duration = 500;
     let dampening = 0.5;
     let delay = 0;
 
@@ -107,7 +120,6 @@ function showObject(idx) {
       }
 
       const scaleVals = data.scale.split(' ').map(parseFloat);
-
       entity.setAttribute(`animation__bounce${delay}`, `
         property: position;
         from: 0 ${finalY + bounceHeight} 0;
@@ -136,7 +148,7 @@ function showObject(idx) {
     }
 
     bounce();
-  }, 800);
+  }, 1500);
 }
 
 document.getElementById('nextObject').addEventListener('click', () => {
